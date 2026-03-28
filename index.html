@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>RetroToons - PWA</title>
+
+    <!-- CONFIGURACIÓN PWA PARA IPHONE (iOS) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RetroToons">
+    
+    <!-- Este es el icono que verás en tu pantalla de inicio -->
+    <link rel="apple-touch-icon" href="https://i.ibb.co/tPHM2bMt/icono.png">
+
+    <!-- Splash Screens -->
+    <link rel="apple-touch-startup-image" href="https://i.ibb.co/tPHM2bMt/icono.png">
+
+    <!-- Librerías y Fuentes -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Color de tema para la barra superior -->
+    <meta name="theme-color" content="#ffb300">
+    <link rel="manifest" id="manifest-link">
+
+    <style>
+        /* Estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #ffcc33;
+            color: #222;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            width: 100%;
+            background: #ffb300;
+            text-align: center;
+            padding: calc(15px + env(safe-area-inset-top)) 10px 15px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        header img {
+            max-width: 160px;
+            width: 45%;
+            height: auto;
+        }
+
+        .view-container {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 90px;
+        }
+
+        .view {
+            display: none;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* VISTA EN VIVO */
+        .live-view {
+            background: radial-gradient(circle at top, #333 0%, #000 100%);
+            color: #fff;
+            min-height: 100%;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            background: #ff0000;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.7em;
+            margin-bottom: 10px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .player-wrapper {
+            background: #000;
+            border: 2px solid #ffb300;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 179, 0, 0.4);
+            margin-bottom: 20px;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+            aspect-ratio: 16 / 9;
+            background: #000;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .btn-stream {
+            flex: 1;
+            padding: 15px 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8em;
+            background: linear-gradient(180deg, #ffeb3b, #ff9800);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #b26a00;
+        }
+
+        .btn-stream:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #b26a00;
+        }
+
+        /* Navegación Inferior */
+        nav.bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom)) 0;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #888;
+            font-size: 0.75em;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-item.active {
+            color: #d32f2f;
+        }
+
+        .nav-icon { font-size: 22px; margin-bottom: 2px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <img src="https://i.ibb.co/tPHM2bMt/icono.png" alt="RetroToons Logo">
+    </header>
+
+    <div class="view-container">
+        <!-- INICIO -->
+        <section id="inicio" class="view active">
+            <h1 style="color: #d32f2f; font-size: 2.2em; margin-bottom: 15px;">¡Bienvenido!</h1>
+            <p style="margin-bottom: 20px;">Tu canal favorito de caricaturas clásicas. Revive los mejores momentos de la animación retro.</p>
+            <div style="background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px; border: 2px dashed #d32f2f;">
+                <p style="font-style: italic;">"¡Eso es todo amigos!"</p>
+            </div>
+            <footer style="margin-top: 40px; font-size: 0.8em; opacity: 0.6;">© 2025 RetroToons</footer>
+        </section>
+
+        <!-- EN VIVO -->
+        <section id="envivo" class="view live-view">
+            <div class="live-indicator">● EN VIVO</div>
+            <h2 style="font-size: 1.2em; margin-bottom: 15px; letter-spacing: 1px;">RETROTOONS TV</h2>
+            
+            <div class="player-wrapper">
+                <video id="video" controls playsinline poster="https://i.ibb.co/tPHM2bMt/icono.png"></video>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-stream" onclick="playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8')">
+                    📺 OPCIÓN 1
+                </button>
+                <button class="btn-stream" onclick="playStream('https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8')">
+                    📺 OPCIÓN 2
+                </button>
+            </div>
+            <p style="margin-top: 25px; font-size: 0.8em; color: #ffb300;">Disfrutando de: Clásicos Animados</p>
+        </section>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="bottom-nav">
+        <a href="javascript:void(0)" class="nav-item active" onclick="showView('inicio', this)">
+            <span class="nav-icon">🏠</span>
+            <span>Inicio</span>
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="showView('envivo', this)">
+            <span class="nav-icon">🔴</span>
+            <span>En Vivo</span>
+        </a>
+    </nav>
+
+    <script>
+        const video = document.getElementById('video');
+        let hls;
+
+        function showView(viewId, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+
+            if(viewId === 'envivo') {
+                playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8');
+            } else {
+                video.pause();
+            }
+        }
+
+        function playStream(url) {
+            if (hls) {
+                hls.destroy();
+                hls = null;
+            }
+
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.play().catch(e => console.log("Reproducción bloqueada"));
+            } 
+            else if (Hls.isSupported()) {
+                hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(e => console.log("Reproducción bloqueada"));
+                });
+            }
+        }
+
+        // Crear Manifest dinámico
+        const manifest = {
+            "name": "RetroToons TV",
+            "short_name": "RetroToons",
+            "start_url": "./index.html",
+            "display": "standalone",
+            "background_color": "#ffcc33",
+            "theme_color": "#ffb300",
+            "icons": [
+                { "src": "https://i.ibb.co/tPHM2bMt/icono.png", "sizes": "192x192", "type": "image/png" },
+                { "src": "https://i.ibb.co/tPHM2bMt/icono.png", "sizes": "512x512", "type": "image/png" }
+            ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+        document.getElementById('manifest-link').setAttribute('href', URL.createObjectURL(manifestBlob));
+
+        // Service Worker
+        if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+            const swCode = "self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));";
+            const swBlob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+        }
+    </script>
+</body>
+</html>
