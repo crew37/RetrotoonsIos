@@ -10,18 +10,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="RetroToons">
     
-    <!-- Este es el icono que verás en tu pantalla de inicio -->
-    <link rel="apple-touch-icon" href="https://i.ibb.co/tPHM2bMt/icono.png">
+    <!-- Icono para pantalla de inicio (Usando la nueva imagen) -->
+    <link rel="apple-touch-icon" href="3599392_splash.png">
 
     <!-- Splash Screens -->
-    <link rel="apple-touch-startup-image" href="https://i.ibb.co/tPHM2bMt/icono.png">
+    <link rel="apple-touch-startup-image" href="3599392_splash.png">
 
     <!-- Librerías y Fuentes -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
-    <!-- Color de tema para la barra superior -->
-    <meta name="theme-color" content="#ffb300">
+    <!-- Color de tema para la barra superior del sistema -->
+    <meta name="theme-color" content="#6200ea">
     <link rel="manifest" id="manifest-link">
 
     <style>
@@ -43,19 +43,24 @@
             overflow: hidden;
         }
 
+        /* Header Violeta con el nuevo Logo */
         header {
             width: 100%;
-            background: #ffb300;
+            background: #6200ea; 
             text-align: center;
-            padding: calc(15px + env(safe-area-inset-top)) 10px 15px 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: calc(10px + env(safe-area-inset-top)) 10px 10px 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 10;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         header img {
-            max-width: 160px;
-            width: 45%;
-            height: auto;
+            max-height: 70px; /* Ajustado para que no ocupe demasiado espacio */
+            width: auto;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
         }
 
         .view-container {
@@ -138,35 +143,43 @@
             box-shadow: 0 2px 0 #b26a00;
         }
 
-        /* Navegación Inferior */
+        /* Navegación Inferior - Color Violeta */
         nav.bottom-nav {
             position: fixed;
             bottom: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
+            background: #6200ea; 
             display: flex;
             justify-content: space-around;
             padding: 10px 0 calc(10px + env(safe-area-inset-bottom)) 0;
-            border-top: 1px solid rgba(0,0,0,0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 100;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #888;
+            color: rgba(255, 255, 255, 0.5); 
             font-size: 0.75em;
             text-decoration: none;
             font-weight: bold;
+            transition: all 0.3s ease;
+            width: 50%;
         }
 
         .nav-item.active {
-            color: #d32f2f;
+            color: #ffffff; 
+            transform: scale(1.05);
         }
 
-        .nav-icon { font-size: 22px; margin-bottom: 2px; }
+        .nav-icon { 
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+            fill: currentColor; 
+        }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -175,27 +188,33 @@
 <body>
 
     <header id="main-header">
-        <img src="https://i.ibb.co/tPHM2bMt/icono.png" alt="RetroToons Logo">
+        <!-- Uso de la imagen subida por el usuario -->
+        <img src="3599392_splash.png" alt="RetroToons! Logo">
     </header>
 
     <div class="view-container">
-        <!-- INICIO -->
+        <!-- SECCIÓN: INICIO -->
         <section id="inicio" class="view active">
             <h1 style="color: #d32f2f; font-size: 2.2em; margin-bottom: 15px;">¡Bienvenido!</h1>
             <p style="margin-bottom: 20px;">Tu canal favorito de caricaturas clásicas. Revive los mejores momentos de la animación retro.</p>
+            
+            <div style="margin: 20px 0;">
+                            </div>
+
             <div style="background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px; border: 2px dashed #d32f2f;">
                 <p style="font-style: italic;">"¡Eso es todo amigos!"</p>
             </div>
+            
             <footer style="margin-top: 40px; font-size: 0.8em; opacity: 0.6;">© 2025 RetroToons</footer>
         </section>
 
-        <!-- EN VIVO -->
+        <!-- SECCIÓN: EN VIVO -->
         <section id="envivo" class="view live-view">
             <div class="live-indicator">● EN VIVO</div>
             <h2 style="font-size: 1.2em; margin-bottom: 15px; letter-spacing: 1px;">RETROTOONS TV</h2>
             
             <div class="player-wrapper">
-                <video id="video" controls playsinline poster="https://i.ibb.co/tPHM2bMt/icono.png"></video>
+                <video id="video" controls playsinline poster="3599392_splash.png"></video>
             </div>
 
             <div class="btn-group">
@@ -210,14 +229,19 @@
         </section>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR VIOLETA -->
     <nav class="bottom-nav">
         <a href="javascript:void(0)" class="nav-item active" onclick="showView('inicio', this)">
-            <span class="nav-icon">🏠</span>
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
             <span>Inicio</span>
         </a>
         <a href="javascript:void(0)" class="nav-item" onclick="showView('envivo', this)">
-            <span class="nav-icon">🔴</span>
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+            </svg>
             <span>En Vivo</span>
         </a>
     </nav>
@@ -260,17 +284,16 @@
             }
         }
 
-        // Crear Manifest dinámico
+        // Manifest
         const manifest = {
             "name": "RetroToons TV",
             "short_name": "RetroToons",
             "start_url": "./index.html",
             "display": "standalone",
-            "background_color": "#ffcc33",
-            "theme_color": "#ffb300",
+            "background_color": "#6200ea",
+            "theme_color": "#6200ea",
             "icons": [
-                { "src": "https://i.ibb.co/tPHM2bMt/icono.png", "sizes": "192x192", "type": "image/png" },
-                { "src": "https://i.ibb.co/tPHM2bMt/icono.png", "sizes": "512x512", "type": "image/png" }
+                { "src": "3599392_splash.png", "sizes": "512x512", "type": "image/png" }
             ]
         };
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
