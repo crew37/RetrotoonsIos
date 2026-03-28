@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="RetroToons">
     
-    <!-- Icono para pantalla de inicio (Usando la nueva imagen) -->
+    <!-- Icono para pantalla de inicio -->
     <link rel="apple-touch-icon" href="3599392_splash.png">
 
     <!-- Splash Screens -->
@@ -18,7 +18,7 @@
 
     <!-- Librerías y Fuentes -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- Color de tema para la barra superior del sistema -->
     <meta name="theme-color" content="#6200ea">
@@ -34,7 +34,7 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', 'Arial', sans-serif;
             background: #ffcc33;
             color: #222;
             display: flex;
@@ -43,7 +43,7 @@
             overflow: hidden;
         }
 
-        /* Header Violeta con el nuevo Logo */
+        /* Header */
         header {
             width: 100%;
             background: #6200ea; 
@@ -58,7 +58,7 @@
         }
 
         header img {
-            max-height: 70px; /* Ajustado para que no ocupe demasiado espacio */
+            max-height: 70px;
             width: auto;
             filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
         }
@@ -75,17 +75,65 @@
             padding: 20px;
             text-align: center;
             animation: fadeIn 0.3s ease-in-out;
+            min-height: 100%;
+            position: relative;
         }
 
         .view.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* INICIO CUSTOMIZADO */
+        #inicio {
+            justify-content: flex-start;
+            padding-top: 40px;
+        }
+
+        #inicio h1 {
+            color: #000000; /* Negro como pediste */
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-weight: 900;
+        }
+
+        .welcome-text {
+            font-weight: bold; /* Negrita */
+            font-size: 1.1em;
+            margin-top: 40px; /* Más abajo */
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        .quote-box {
+            background: rgba(255,255,255,0.4);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px dashed #000;
+            margin-top: 40px;
+        }
+
+        .custom-footer {
+            margin-top: auto; /* Empuja al fondo */
+            padding: 20px 0;
+        }
+
+        .black-badge {
+            background-color: #000000;
+            color: #ffffff;
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
         /* VISTA EN VIVO */
         .live-view {
             background: radial-gradient(circle at top, #333 0%, #000 100%);
             color: #fff;
-            min-height: 100%;
             font-family: 'Orbitron', sans-serif;
         }
 
@@ -138,12 +186,7 @@
             box-shadow: 0 4px 0 #b26a00;
         }
 
-        .btn-stream:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #b26a00;
-        }
-
-        /* Navegación Inferior - Color Violeta */
+        /* Navbar */
         nav.bottom-nav {
             position: fixed;
             bottom: 0;
@@ -188,24 +231,28 @@
 <body>
 
     <header id="main-header">
-        <!-- Uso de la imagen subida por el usuario -->
         <img src="3599392_splash.png" alt="RetroToons! Logo">
     </header>
 
     <div class="view-container">
         <!-- SECCIÓN: INICIO -->
         <section id="inicio" class="view active">
-            <h1 style="color: #d32f2f; font-size: 2.2em; margin-bottom: 15px;">¡Bienvenido!</h1>
-            <p style="margin-bottom: 20px;">Tu canal favorito de caricaturas clásicas. Revive los mejores momentos de la animación retro.</p>
+            <h1>¡Bienvenido!</h1>
             
-            <div style="margin: 20px 0;">
-                            </div>
-
-            <div style="background: rgba(255,255,255,0.3); padding: 20px; border-radius: 15px; border: 2px dashed #d32f2f;">
-                <p style="font-style: italic;">"¡Eso es todo amigos!"</p>
+            <p class="welcome-text">
+                Tu canal favorito de caricaturas clásicas.<br>
+                Revive los mejores momentos de la animación retro.
+            </p>
+            
+            <div class="quote-box">
+                <p style="font-style: italic; font-weight: bold;">"¡Eso es todo amigos!"</p>
             </div>
-            
-            <footer style="margin-top: 40px; font-size: 0.8em; opacity: 0.6;">© 2025 RetroToons</footer>
+
+            <div class="custom-footer">
+                <div class="black-badge">
+                    © 2025 RetroToons
+                </div>
+            </div>
         </section>
 
         <!-- SECCIÓN: EN VIVO -->
@@ -225,7 +272,6 @@
                     📺 OPCIÓN 2
                 </button>
             </div>
-            <p style="margin-top: 25px; font-size: 0.8em; color: #ffb300;">Disfrutando de: Clásicos Animados</p>
         </section>
     </div>
 
@@ -239,8 +285,7 @@
         </a>
         <a href="javascript:void(0)" class="nav-item" onclick="showView('envivo', this)">
             <svg class="nav-icon" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="8" />
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77.42-1.56.42-4.81.42-4.81s0-3.25-.42-4.81zM10 15V9l5.2 3L10 15z"/>
             </svg>
             <span>En Vivo</span>
         </a>
@@ -251,8 +296,13 @@
         let hls;
 
         function showView(viewId, element) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+            document.querySelectorAll('.view').forEach(v => {
+                v.style.display = 'none';
+                v.classList.remove('active');
+            });
+            const selectedView = document.getElementById(viewId);
+            selectedView.style.display = 'flex';
+            selectedView.classList.add('active');
             
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             element.classList.add('active');
@@ -265,22 +315,15 @@
         }
 
         function playStream(url) {
-            if (hls) {
-                hls.destroy();
-                hls = null;
-            }
-
+            if (hls) { hls.destroy(); hls = null; }
             if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
-                video.play().catch(e => console.log("Reproducción bloqueada"));
-            } 
-            else if (Hls.isSupported()) {
+                video.play().catch(e => console.log("Bloqueado"));
+            } else if (Hls.isSupported()) {
                 hls = new Hls();
                 hls.loadSource(url);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(e => console.log("Reproducción bloqueada"));
-                });
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => console.log("Bloqueado")));
             }
         }
 
@@ -292,19 +335,10 @@
             "display": "standalone",
             "background_color": "#6200ea",
             "theme_color": "#6200ea",
-            "icons": [
-                { "src": "3599392_splash.png", "sizes": "512x512", "type": "image/png" }
-            ]
+            "icons": [{ "src": "3599392_splash.png", "sizes": "512x512", "type": "image/png" }]
         };
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
         document.getElementById('manifest-link').setAttribute('href', URL.createObjectURL(manifestBlob));
-
-        // Service Worker
-        if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
-            const swCode = "self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));";
-            const swBlob = new Blob([swCode], {type: 'application/javascript'});
-            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
-        }
     </script>
 </body>
 </html>
