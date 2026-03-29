@@ -1,273 +1,214 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>RetroToons | Clásicos Animados</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RetroToons | Clásicos Animados</title>
 
-    <!-- Meta tags para PWA y iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="RetroToons">
-    
-    <!-- ESTA ES LA LÍNEA PARA EL ICONO EN IPHONE -->
-    <link rel="apple-touch-icon" href="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true">
+<!-- PWA / iOS -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RetroToons">
+<link rel="apple-touch-icon" href="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true">
 
-    <!-- Fuentes y Reproductor -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <style>
-        :root {
-            --primary: #ffcc33;
-            --primary-dark: #ffb300;
-            --accent: #ff9800;
-            --bg-dark: #121212;
-            --card-bg: #1e1e1e;
-            --text-light: #ffffff;
-            --text-muted: #aaaaaa;
-            --nav-bg: #1a1a1a;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+<style>
+:root {
+    --primary: #ffcc33;
+    --accent: #ff9800;
+    --bg-dark: #121212;
+    --card-bg: #1e1e1e;
+    --text-light: #ffffff;
+    --text-muted: #aaaaaa;
+}
 
-        html, body {
-            height: 100%;
-            overflow: hidden; /* Evita scroll global del body */
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            font-family: 'Poppins', sans-serif;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
+html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-dark);
+    font-family: 'Poppins', sans-serif;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
 
-        /* Contenedor de Pantallas */
-        .screen {
-            display: none;
-            height: 100vh;
-            width: 100%;
-            overflow-y: auto; /* El scroll solo ocurre dentro de la pantalla si es necesario */
-            padding-bottom: 100px;
-            animation: fadeIn 0.3s ease-in-out;
-            -webkit-overflow-scrolling: touch;
-        }
+/* SPLASH */
+#splash {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #ffcc33, #ff9800);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity .5s;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+#splash img {
+    width: 220px;
+    border-radius: 20px;
+}
 
-        .active {
-            display: flex;
-            flex-direction: column;
-        }
+/* Screens */
+.screen {
+    display: none;
+    height: 100dvh;
+    overflow-y: auto;
+    padding-bottom: 120px;
+    animation: fade .3s;
+}
 
-        /* ================= INICIO ================= */
-        #inicio {
-            background: linear-gradient(135deg, #ffcc33 0%, #ff9800 100%);
-            color: #222;
-        }
+.active {
+    display: flex;
+    flex-direction: column;
+}
 
-        #inicio header {
-            padding: 40px 20px;
-            text-align: center;
-            flex-shrink: 0;
-        }
+@keyframes fade {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
 
-        #inicio header img {
-            max-width: 280px;
-            width: 70%;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
-            border-radius: 20px;
-        }
+/* INICIO */
+#inicio {
+    background: linear-gradient(135deg, #ffcc33 0%, #ff9800 100%);
+    color: #222;
+}
 
-        #inicio main {
-            flex: 1;
-            padding: 20px;
-            text-align: center;
-            background: white;
-            border-radius: 40px 40px 0 0;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
-        }
+#inicio header {
+    padding: 40px 20px;
+    text-align: center;
+}
 
-        .welcome-card {
-            padding: 30px 10px;
-        }
+#inicio header img {
+    width: 70%;
+    max-width: 280px;
+    border-radius: 20px;
+}
 
-        .welcome-card h1 {
-            font-weight: 700;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: #333;
-        }
+#inicio main {
+    flex: 1;
+    background: white;
+    border-radius: 40px 40px 0 0;
+    padding: 30px;
+    text-align: center;
+}
 
-        .welcome-card p {
-            color: #666;
-            line-height: 1.6;
-            font-size: 1.1rem;
-        }
+.welcome-card h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
 
-        .btn-main {
-            margin-top: 30px;
-            background: var(--bg-dark);
-            color: white;
-            padding: 15px 40px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            transition: transform 0.2s;
-            cursor: pointer;
-            border: none;
-        }
+.welcome-card p {
+    color: #666;
+}
 
-        .btn-main:active {
-            transform: scale(0.95);
-        }
+/* EN VIVO */
+#envivo {
+    background: #000;
+}
 
-        /* ================= EN VIVO ================= */
-        #envivo {
-            background: #000;
-        }
+#envivo header {
+    text-align: center;
+    padding: 15px;
+    font-family: 'Orbitron';
+    background: linear-gradient(to bottom, #222, #000);
+    border-bottom: 2px solid var(--primary);
+}
 
-        #envivo header {
-            font-family: 'Orbitron', sans-serif;
-            text-align: center;
-            padding: 20px;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            background: linear-gradient(to bottom, #222, #000);
-            border-bottom: 2px solid var(--primary);
-            flex-shrink: 0;
-        }
+.video-container {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: black;
+}
 
-        .video-container {
-            position: relative;
-            width: 100%;
-            background: #000;
-            aspect-ratio: 16 / 9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+video {
+    width: 100%;
+    height: 100%;
+}
 
-        video {
-            width: 100%;
-            height: 100%;
-            box-shadow: 0 0 30px rgba(255, 204, 51, 0.2);
-        }
+.channel-info {
+    padding: 20px;
+}
 
-        .channel-info {
-            padding: 20px;
-        }
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 0 20px;
+}
 
-        .channel-info h2 {
-            font-size: 1.4rem;
-            margin-bottom: 5px;
-            color: var(--primary);
-        }
+.option-btn {
+    background: var(--card-bg);
+    border: 1px solid #333;
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
 
-        .channel-info p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
+.option-btn.active-stream {
+    border-color: var(--primary);
+}
 
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 0 20px;
-        }
+/* NAVBAR */
+.navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background: rgba(20,20,20,0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: env(safe-area-inset-bottom);
+    border-top: 1px solid #333;
+}
 
-        .option-btn {
-            background: var(--card-bg);
-            border: 1px solid #333;
-            color: white;
-            padding: 20px 10px;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
-        }
+.navbtn {
+    color: #aaa;
+    text-align: center;
+    font-size: 12px;
+}
 
-        .option-btn.active-stream {
-            border-color: var(--primary);
-            background: rgba(255, 204, 51, 0.1);
-        }
+.navbtn.active {
+    color: var(--primary);
+}
 
-        /* ================= NAVBAR ================= */
-        .navbar {
-            position: fixed;
-            bottom: 0; /* CAMBIA ESTO: Ejemplo 10px para subirla un poco desde el borde */
-            left: 0;
-            right: 0;
-            height: 100px; /* Ajusta la altura total de la barra aquí */
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding-bottom: env(safe-area-inset-bottom);
-            border-top: 1px solid #333;
-            z-index: 1000;
-        }
+.navbtn svg {
+    width: 26px;
+    height: 26px;
+    fill: currentColor;
+}
 
-        .navbtn {
-            color: var(--text-muted);
-            text-align: center;
-            font-size: 0.75rem;
-            flex: 1;
-            transition: color 0.3s;
-            cursor: pointer;
-            padding: 10px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .navbtn.active {
-            color: var(--primary);
-        }
-
-        .navbtn svg {
-            width: 28px;
-            height: 28px;
-            margin-bottom: 4px;
-            fill: currentColor;
-        }
-
-        #video-error {
-            display: none;
-            position: absolute;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.8rem;
-            z-index: 10;
-        }
-    </style>
+/* FULLSCREEN VIDEO */
+video:fullscreen + .navbar {
+    display: none;
+}
+</style>
 </head>
 
 <body>
 
-<!-- ================= INICIO ================= -->
+<!-- SPLASH -->
+<div id="splash">
+    <img src="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true">
+</div>
+
+<!-- INICIO -->
 <div id="inicio" class="screen active">
     <header>
-        <!-- Icono cargado desde GitHub (Raw link) -->
-        <img src="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true" alt="RetroToons Logo" onerror="this.src='https://via.placeholder.com/300x150?text=RetroToons'">
+        <img src="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true">
     </header>
 
     <main>
@@ -281,95 +222,86 @@
     </main>
 </div>
 
-<!-- ================= EN VIVO ================= -->
+<!-- EN VIVO -->
 <div id="envivo" class="screen">
     <header>RETROTOONS TV</header>
 
     <div class="video-container">
-        <video id="video" controls playsinline poster="https://via.placeholder.com/640x360/000000/FFFFFF?text=Cargando+Stream..."></video>
-        <div id="video-error">Error al cargar el canal. Intenta con otra opción.</div>
+        <video id="video" controls playsinline></video>
     </div>
 
     <div class="channel-info">
         <h2>Transmisión en Vivo</h2>
-        <p>Selecciona una señal alternativa si tienes problemas.</p>
+        <p>Selecciona una señal alternativa</p>
     </div>
 
     <div class="options-grid">
-        <div class="option-btn active-stream" id="opt1" onclick="event.preventDefault(); playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8', 'opt1')">
-            <span>📡</span><br>Señal Principal
+        <div class="option-btn active-stream" onclick="playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8')">
+            📡 Señal Principal
         </div>
 
-        <div class="option-btn" id="opt2" onclick="event.preventDefault(); playStream('https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8', 'opt2')">
-            <span>🛰️</span><br>Señal Espejo
+        <div class="option-btn" onclick="playStream('https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8')">
+            🛰️ Señal Espejo
         </div>
     </div>
 </div>
 
-<!-- ================= NAVBAR ================= -->
+<!-- NAVBAR -->
 <nav class="navbar">
-    <div class="navbtn active" id="nav-inicio" onclick="event.preventDefault(); showScreen('inicio')">
-        <!-- Icono de Casa SVG -->
+    <div class="navbtn active" onclick="showScreen('inicio')">
         <svg viewBox="0 0 24 24">
             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
         Inicio
     </div>
-    <div class="navbtn" id="nav-envivo" onclick="event.preventDefault(); showScreen('envivo')">
-        <!-- Icono de TV Retro SVG -->
+
+    <div class="navbtn" onclick="showScreen('envivo')">
         <svg viewBox="0 0 24 24">
-            <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12zm-5-6l-7 4V7l7 4z"/>
+            <path d="M21 3H3v12h18V3zm-5 6l-7 4V5l7 4z"/>
         </svg>
         En Vivo
     </div>
 </nav>
 
 <script>
-    const video = document.getElementById('video');
-    const errorMsg = document.getElementById('video-error');
-    let hls;
+const video = document.getElementById('video');
+let hls;
 
-    function showScreen(screenId) {
-        window.scrollTo(0, 0);
-        document.querySelectorAll('.screen').forEach(s => {
-            s.classList.remove('active');
-            s.scrollTop = 0;
+function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+
+    document.querySelectorAll('.navbtn').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+}
+
+function playStream(url){
+    if(hls){ hls.destroy(); }
+
+    if(Hls.isSupported()){
+        hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            video.play();
         });
-        const targetScreen = document.getElementById(screenId);
-        targetScreen.classList.add('active');
-        document.querySelectorAll('.navbtn').forEach(b => b.classList.remove('active'));
-        const navBtn = document.getElementById('nav-' + screenId);
-        if(navBtn) navBtn.classList.add('active');
+    } else {
+        video.src = url;
+        video.play();
     }
+}
 
-    function playStream(url, btnId) {
-        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active-stream'));
-        if(btnId) {
-            const btn = document.getElementById(btnId);
-            if(btn) btn.classList.add('active-stream');
-        }
-        errorMsg.style.display = 'none';
-        if (hls) { hls.destroy(); }
-        if (Hls.isSupported()) {
-            hls = new Hls({ capLevelToPlayerSize: true, autoStartLoad: true });
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                video.play().catch(() => console.log("Auto-play bloqueado"));
-            });
-            hls.on(Hls.Events.ERROR, (event, data) => {
-                if (data.fatal) errorMsg.style.display = 'block';
-            });
-        } 
-        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = url;
-            video.addEventListener('loadedmetadata', () => video.play(), { once: true });
-        }
-    }
+/* Splash */
+window.onload = () => {
+    setTimeout(()=>{
+        document.getElementById('splash').style.opacity = '0';
+        setTimeout(()=>{
+            document.getElementById('splash').style.display = 'none';
+        },500);
+    },1500);
 
-    window.addEventListener('load', () => {
-        playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8', 'opt1');
-    });
+    playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8');
+}
 </script>
 
 </body>
