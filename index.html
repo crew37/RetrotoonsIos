@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-title" content="RetroToons">
     
     <!-- Icono para pantalla de inicio -->
-    <link rel="apple-touch-icon" href="Icon.png">
+    <link rel="apple-touch-icon" href="3599392_splash.png">
 
     <!-- Splash Screens -->
     <link rel="apple-touch-startup-image" href="3599392_splash.png">
@@ -36,27 +36,27 @@
         html, body {
             height: 100%;
             width: 100%;
-            overflow: hidden; /* Evita scroll en el body principal */
-            overscroll-behavior: none; /* Desactiva gestos de navegación del navegador */
+            overflow: hidden;
+            overscroll-behavior: none;
         }
 
         body {
             font-family: 'Roboto', 'Arial', sans-serif;
-            background: #ffcc33;
+            background: #ffcc33; /* Fondo principal AMARILLO */
             color: #222;
             display: flex;
             flex-direction: column;
         }
 
-        /* Header */
+        /* Header VIOLETA */
         header {
             width: 100%;
             background: #6200ea; 
             text-align: center;
             padding: calc(10px + env(safe-area-inset-top)) 10px 10px 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -66,30 +66,31 @@
         header img {
             max-height: 70px;
             width: auto;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
         }
 
         .view-container {
             flex: 1;
             position: relative;
             width: 100%;
-            overflow: hidden; /* Bloquea el scroll entre vistas */
+            overflow: hidden;
         }
 
         .view {
-            display: none; /* Totalmente oculto si no está activo */
+            display: none;
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            overflow-y: auto; /* Scroll interno solo para la vista activa */
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             padding: 20px;
-            padding-bottom: 100px; /* Margen para la navbar */
+            padding-bottom: 100px;
             text-align: center;
             opacity: 0;
             transition: opacity 0.3s ease;
+            background: transparent; /* Permite ver el fondo amarillo del body */
         }
 
         .view.active {
@@ -99,32 +100,32 @@
             z-index: 10;
         }
 
-        /* INICIO */
+        /* INICIO - Ajuste de colores para fondo amarillo */
         #inicio {
             justify-content: flex-start;
             padding-top: 40px;
         }
 
         #inicio h1 {
-            color: #000000;
+            color: #000;
             font-size: 2.5em;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-weight: 900;
         }
 
         .welcome-text {
             font-weight: bold;
             font-size: 1.1em;
-            margin-top: 40px;
+            margin-top: 20px;
             line-height: 1.5;
-            padding: 0 10px;
+            color: #333;
         }
 
         .quote-box {
-            background: rgba(255,255,255,0.4);
+            background: rgba(255, 255, 255, 0.4);
             padding: 20px;
             border-radius: 15px;
-            border: 2px dashed #000;
+            border: 2px dashed #6200ea; /* Borde violeta para contrastar */
             margin-top: 40px;
         }
 
@@ -142,13 +143,12 @@
             font-weight: bold;
             font-size: 0.9em;
             letter-spacing: 1px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        /* VISTA EN VIVO */
+        /* VISTA EN VIVO - Fondo oscuro para el reproductor */
         .live-view {
-            background: radial-gradient(circle at top, #333 0%, #000 100%);
-            color: #fff;
+            background: rgba(0, 0, 0, 0.05); /* Sutil oscurecimiento sobre el amarillo */
+            color: #000;
             font-family: 'Orbitron', sans-serif;
             align-items: center;
         }
@@ -176,10 +176,10 @@
             width: 100%;
             max-width: 600px;
             background: #000;
-            border: 2px solid #ffb300;
+            border: 3px solid #6200ea; /* Borde violeta */
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 179, 0, 0.4);
+            box-shadow: 0 10px 25px rgba(98, 0, 234, 0.3);
             margin-bottom: 20px;
             flex-shrink: 0;
         }
@@ -205,16 +205,16 @@
             padding: 15px 5px;
             font-family: 'Orbitron', sans-serif;
             font-size: 0.8em;
-            background: linear-gradient(180deg, #ffeb3b, #ff9800);
+            background: #6200ea; /* Botones violetas */
             border: none;
             border-radius: 10px;
-            color: #000;
+            color: #fff;
             font-weight: bold;
-            box-shadow: 0 4px 0 #b26a00;
+            box-shadow: 0 4px 0 #3700b3;
             cursor: pointer;
         }
 
-        /* Navbar */
+        /* Navbar VIOLETA */
         nav.bottom-nav {
             position: fixed;
             bottom: 0;
@@ -273,11 +273,16 @@
             </p>
             
             <div class="quote-box">
-                <p style="font-style: italic; font-weight: bold;">"¡Eso es todo amigos!"</p>
+                <p style="font-style: italic; font-weight: bold; color: #6200ea;">"¡Eso es todo amigos!"</p>
             </div>
 
-            <!-- Contenido extra para scroll interno -->
-            
+            <div style="margin-top: 30px; text-align: left; padding: 20px; background: rgba(255,255,255,0.4); border-radius: 10px; border: 1px solid #6200ea;">
+                <h3 style="margin-bottom: 10px; color: #000;">Programación del día</h3>
+                <p>• Los Picapiedra - 09:00 AM</p>
+                <p>• El Oso Yogi - 10:30 AM</p>
+                <p>• Scooby-Doo - 12:00 PM</p>
+                <p>• Los Supersónicos - 01:30 PM</p>
+            </div>
 
             <div class="custom-footer">
                 <div class="black-badge">
@@ -292,7 +297,7 @@
                 <div class="live-indicator">● EN VIVO</div>
             </div>
             
-            <h2 style="font-size: 1.2em; margin-bottom: 15px; letter-spacing: 1px;">RETROTOONS TV</h2>
+            <h2 style="font-size: 1.2em; margin-bottom: 15px; letter-spacing: 1px; color: #000;">RETROTOONS TV</h2>
             
             <div class="player-wrapper">
                 <video id="video" controls playsinline poster="3599392_splash.png"></video>
@@ -309,7 +314,7 @@
         </section>
     </div>
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR VIOLETA -->
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="showView('inicio', this)">
             <svg class="nav-icon" viewBox="0 0 24 24">
@@ -330,25 +335,20 @@
         let hls;
 
         function showView(viewId, element) {
-            // Pausar vídeo si no estamos en la vista de stream
             if(viewId !== 'envivo') {
                 video.pause();
             }
 
-            // Desactivar todas las vistas
             document.querySelectorAll('.view').forEach(v => {
                 v.classList.remove('active');
                 v.style.display = 'none';
-                v.scrollTop = 0; // Reiniciar posición de scroll
+                v.scrollTop = 0;
             });
             
-            // Activar la vista solicitada
             const selectedView = document.getElementById(viewId);
             selectedView.style.display = 'flex';
-            // Pequeño retardo para asegurar que el display:flex se aplique antes de la transición de opacidad
             setTimeout(() => selectedView.classList.add('active'), 10);
             
-            // Actualizar botones de navegación
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             element.classList.add('active');
 
@@ -361,51 +361,43 @@
             if (hls) { hls.destroy(); hls = null; }
             if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
-                video.play().catch(e => console.log("Error de reproducción"));
+                video.play().catch(e => {});
             } else if (Hls.isSupported()) {
                 hls = new Hls();
                 hls.loadSource(url);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => console.log("Error de reproducción")));
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => {}));
             }
         }
 
-        // Configuración de PWA dinámica
+        // PWA Manifest
         const manifest = {
             "name": "RetroToons TV",
             "short_name": "RetroToons",
             "start_url": ".",
             "display": "standalone",
-            "background_color": "#6200ea",
+            "background_color": "#ffcc33",
             "theme_color": "#6200ea",
             "icons": [{ "src": "3599392_splash.png", "sizes": "512x512", "type": "image/png" }]
         };
         const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
         document.getElementById('manifest-link').setAttribute('href', URL.createObjectURL(manifestBlob));
 
-        // Manejo del Service Worker (con fix para protocolos blob)
+        // Service Worker (Fix para entornos restringidos)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'retrotoons-cache-v1.6';
                     self.addEventListener('install', e => self.skipWaiting());
                     self.addEventListener('activate', e => {
                         e.waitUntil(caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k)))));
                     });
-                    self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+                    self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
                 `;
-                
                 try {
                     const swBlob = new Blob([swCode], {type: 'application/javascript'});
                     const swUrl = URL.createObjectURL(swBlob);
-                    
-                    // Solo intentar registrar si el protocolo es compatible o si no estamos en un entorno restringido
-                    navigator.serviceWorker.register(swUrl).catch(err => {
-                        console.warn('Registro de SW omitido o fallido en este entorno.');
-                    });
-                } catch (e) {
-                    console.error('No se pudo inicializar el worker.');
-                }
+                    navigator.serviceWorker.register(swUrl).catch(() => {});
+                } catch (e) {}
             });
         }
     </script>
