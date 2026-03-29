@@ -10,6 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="RetroToons">
     
+    <!-- ESTA ES LA LÍNEA PARA EL ICONO EN IPHONE -->
+    <link rel="apple-touch-icon" href="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true">
+
     <!-- Fuentes y Reproductor -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -258,18 +261,18 @@
 <!-- ================= INICIO ================= -->
 <div id="inicio" class="screen active">
     <header>
-        <img src="https://i.ibb.co/tPHM2bMt/icono.png" alt="RetroToons Logo" onerror="this.src='https://via.placeholder.com/300x150?text=RetroToons'">
+        <!-- Icono cargado desde GitHub (Raw link) -->
+        <img src="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true" alt="RetroToons Logo" onerror="this.src='https://via.placeholder.com/300x150?text=RetroToons'">
     </header>
 
     <main>
         <div class="welcome-card">
             <h1>¡Bienvenido a RetroToons!</h1>
             <p>
-                
-Tu canal favorito de caricaturas clásicas.
-Disfruta de la mejor animación retro.
+                Tu canal favorito de caricaturas clásicas.<br>
+                Disfruta de la mejor animación retro.
             </p>
-                    </div>
+        </div>
     </main>
 </div>
 
@@ -316,43 +319,28 @@ Disfruta de la mejor animación retro.
     let hls;
 
     function showScreen(screenId) {
-        // Detener scroll si existiera
         window.scrollTo(0, 0);
-        
-        // Cambiar visibilidad de pantallas
         document.querySelectorAll('.screen').forEach(s => {
             s.classList.remove('active');
-            s.scrollTop = 0; // Reset scroll interno de la pantalla
+            s.scrollTop = 0;
         });
-        
         const targetScreen = document.getElementById(screenId);
         targetScreen.classList.add('active');
-
-        // Actualizar Navbar
         document.querySelectorAll('.navbtn').forEach(b => b.classList.remove('active'));
         const navBtn = document.getElementById('nav-' + screenId);
         if(navBtn) navBtn.classList.add('active');
     }
 
     function playStream(url, btnId) {
-        // Manejo visual de botones
         document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active-stream'));
         if(btnId) {
             const btn = document.getElementById(btnId);
             if(btn) btn.classList.add('active-stream');
         }
-
         errorMsg.style.display = 'none';
-
-        if (hls) {
-            hls.destroy();
-        }
-
+        if (hls) { hls.destroy(); }
         if (Hls.isSupported()) {
-            hls = new Hls({
-                capLevelToPlayerSize: true,
-                autoStartLoad: true
-            });
+            hls = new Hls({ capLevelToPlayerSize: true, autoStartLoad: true });
             hls.loadSource(url);
             hls.attachMedia(video);
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
