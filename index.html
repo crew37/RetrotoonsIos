@@ -2,90 +2,92 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RetroToons TV PWA</title>
     
-    <!-- iOS PWA Meta Tags -->
+    <!-- iOS PWA Meta Tags - NOTCH FULLSCREEN -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="RetroToons TV">
     <link rel="apple-touch-icon" href="Icon.png">
     
-    <!-- Android PWA Meta Tags -->
+    <!-- Safe areas CSS -->
+    <style>
+        :root {
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            --safe-left: env(safe-area-inset-left);
+            --safe-right: env(safe-area-inset-right);
+        }
+    </style>
+    
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#8B5CF6">
     
-    <!-- HLS.js para streaming -->
+    <!-- Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* ESTILOS EMBEBIDOS - HEADER FIJO */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* RESET */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { 
+            height: 100%; 
+            width: 100%; 
+            overflow: hidden; 
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #fff;
-            height: 100vh;
-            overflow: hidden;
-            padding-top: env(safe-area-inset-top); /* Safe area iPhone */
-        }
-
+        /* APP - FULLSCREEN */
         .app {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: 100dvh; /* Dynamic viewport */
+            height: 100dvh;
+            width: 100vw;
+            width: 100dvw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
-        /* Header Violeta - CUBRE TODO */
+        /* HEADER VIOLETA - CUBRE NOTCH */
         .header {
             background: linear-gradient(135deg, #8B5CF6 0%, #5d00a8 100%);
             color: white;
-            padding: 1.5rem 1rem 1rem;
+            padding: calc(var(--safe-top) + 0.5rem) 1rem 1rem;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
-            position: relative;
-            z-index: 10;
+            box-shadow: 0 4px 20px rgba(139,92,246,0.4);
+            z-index: 100;
             flex-shrink: 0;
-            /* Safe areas para iPhone */
-            padding-top: max(env(safe-area-inset-top), 1rem);
-            padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            min-height: calc(var(--safe-top) + 3rem);
         }
 
         .header img {
-            display: block;
-            margin: 0 auto;
             max-width: 35%;
-            max-height: 60px;
+            max-height: 50px;
             height: auto;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
 
-        /* Contenido Principal Amarillo */
+        /* MAIN AMARILLO */
         .main-content {
             flex: 1;
             background: linear-gradient(135deg, #FCD34D 0%, #FBBF24 50%, #F59E0B 100%);
             overflow-y: auto;
-            /* Safe areas */
-            padding-top: env(safe-area-inset-top, 1rem);
-            padding-bottom: env(safe-area-inset-bottom, 1rem);
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding: 1rem;
+            padding-bottom: calc(var(--safe-bottom) + 1rem);
         }
 
-        .section {
-            display: none;
-            min-height: 100%;
-        }
-
-        .section.active {
-            display: block;
-            animation: fadeIn 0.3s ease-in;
+        .section { display: none; min-height: 100%; }
+        .section.active { 
+            display: block; 
+            animation: fadeIn 0.3s ease-in; 
         }
 
         @keyframes fadeIn {
@@ -93,54 +95,61 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ESTILOS INICIO */
+        /* INICIO */
         .content {
             max-width: 400px;
             margin: 0 auto;
+            text-align: center;
         }
 
-        .content h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
+        .content img {
+            display: block;
+            margin: 0 auto 1.5rem;
+            max-width: 120px;
+            height: auto;
+        }
+
+        .content p {
+            font-size: 1.1rem;
             color: #1F2937;
-            text-align: center;
+            margin-bottom: 2rem;
+            line-height: 1.5;
         }
 
         .cards {
             display: grid;
             gap: 1rem;
-            margin-top: 2rem;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255,255,255,0.95);
             padding: 1.5rem;
             border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             backdrop-filter: blur(10px);
-            text-align: center;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .card h3 {
             color: #8B5CF6;
             margin-bottom: 0.5rem;
+            font-size: 1.2rem;
         }
 
-        /* ESTILOS RETROTOONS EN VIVO */
+        /* RETROTOONS PLAYER */
         .retrotoons-container {
-            max-width: 400px;
-            margin: 0 auto;
             height: 100%;
             display: flex;
             flex-direction: column;
-            font-family: 'Orbitron', sans-serif !important;
-            padding: 0 !important;
+            font-family: 'Orbitron', sans-serif;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         .retrotoons-header {
             text-align: center;
-            padding: 15px;
-            font-size: 24px;
+            padding: 1rem;
+            font-size: 22px;
             font-weight: 700;
             background: linear-gradient(90deg, #ffeb3b, #ff9800);
             color: #000;
@@ -154,62 +163,56 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 200px;
         }
 
         .retrotoons-video {
             width: 100%;
             height: 100%;
-            max-height: 45vh;
             object-fit: contain;
             background: #000;
         }
 
         .retrotoons-buttons {
-            flex-shrink: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
             gap: 15px;
-            padding: 20px;
+            padding: 1.5rem 1rem;
+            flex-shrink: 0;
         }
 
         .retrotoons-btn {
             flex: 1;
-            height: 70px;
-            font-size: 18px;
+            height: 65px;
+            font-size: 16px;
             border-radius: 14px;
             border: none;
             font-family: 'Orbitron', sans-serif;
             background: linear-gradient(180deg, #5d00a8, #8B5CF6);
             color: white;
-            box-shadow: 0 0 12px rgba(139, 92, 246, 0.8);
-            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139,92,246,0.6);
             font-weight: 500;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            cursor: pointer;
         }
 
         .retrotoons-btn:active {
-            transform: scale(0.97);
+            transform: scale(0.98);
         }
 
         .retrotoons-footer {
             text-align: center;
-            padding: 10px;
-            font-size: 14px;
+            padding: 0.8rem 1rem;
+            font-size: 13px;
             color: #ffb300;
-            opacity: 0.8;
+            opacity: 0.9;
             flex-shrink: 0;
         }
 
-        /* Footer Violeta - FIJO */
+        /* FOOTER VIOLETA */
         .footer {
             background: linear-gradient(135deg, #8B5CF6 0%, #5d00a8 100%);
-            box-shadow: 0 -4px 20px rgba(139, 92, 246, 0.4);
-            position: relative;
-            z-index: 10;
+            box-shadow: 0 -4px 20px rgba(139,92,246,0.4);
             flex-shrink: 0;
-            padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+            z-index: 100;
+            padding-bottom: var(--safe-bottom);
         }
 
         .nav {
@@ -224,61 +227,41 @@
             flex: 1;
             background: none;
             border: none;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255,255,255,0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.25rem;
-            font-size: 0.9rem;
+            gap: 0.2rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            padding: 0.5rem;
+            padding: 0.4rem;
             border-radius: 12px;
         }
 
         .nav-btn.active {
             color: white;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255,255,255,0.25);
             backdrop-filter: blur(10px);
         }
 
-        .nav-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .header {
-                padding: 1.2rem 0.8rem 1rem;
-            }
-            
-            .main-content {
-                padding: 0.8rem;
-            }
-        }
+        .nav-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- Header Violeta - AHORA CUBRE TODO -->
+        <!-- HEADER - CUBRE NOTCH -->
         <header class="header">
-            <img src="https://github.com/crew37/RetrotoonsIos/raw/main/3599392_splash.png" alt="RetroToons Logo">
+            <img src="https://github.com/crew37/RetrotoonsIos/raw/main/3599392_splash.png" alt="RetroToons">
         </header>
 
-        <!-- Contenido Principal -->
         <main class="main-content">
-            <!-- Sección Inicio -->
+            <!-- INICIO -->
             <section id="inicio" class="section active">
                 <div class="content">
-                    <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
-                        <img src="https://github.com/crew37/RetrotoonsIos/raw/main/Icon.png" alt="Icono" style="max-width: 120px; height: auto;">
-                    </div>
-                    <h2 style="display: none;">🏠 Inicio</h2>
-                    <p style="text-align: center; font-size: 1.1rem; color: #1F2937; margin-bottom: 2rem;">
-                        Bienvenido a <strong>RetroToons TV</strong><br>
-                        Disfruta de lo mejor de la TV retro en vivo.
-                    </p>
+                    <img src="https://github.com/crew37/RetrotoonsIos/raw/main/Icon.png" alt="Icon">
+                    <p>Bienvenido a <strong>RetroToons TV</strong><br>Disfruta de lo mejor de la TV retro en vivo.</p>
                     <div class="cards">
                         <div class="card">
                             <h3>📺 Canales en Vivo</h3>
@@ -292,21 +275,14 @@
                 </div>
             </section>
 
-            <!-- Sección En Vivo - RETROTOONS TV -->
+            <!-- EN VIVO -->
             <section id="envivo" class="section">
                 <div class="retrotoons-container">
-                    <!-- HEADER RETROTOONS -->
-                    <div class="retrotoons-header">
-                        RETROTOONS TV
-                    </div>
-
-                    <!-- PLAYER CONTAINER -->
+                    <div class="retrotoons-header">RETROTOONS TV</div>
                     <div id="player-container">
                         <video id="video" controls playsinline class="retrotoons-video"></video>
                     </div>
-
-                    <!-- BOTONES DE CANALES -->
-                    <div id="buttons" class="retrotoons-buttons">
+                    <div class="retrotoons-buttons">
                         <button class="retrotoons-btn" onclick="playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8')">
                             📺 Opción 1
                         </button>
@@ -314,100 +290,62 @@
                             📺 Opción 2
                         </button>
                     </div>
-
-                    <!-- FOOTER -->
-                    <div class="retrotoons-footer">
-                        Powered by RetroToons
-                    </div>
+                    <div class="retrotoons-footer">Powered by RetroToons</div>
                 </div>
             </section>
         </main>
 
-        <!-- Footer Violeta FIJO -->
+        <!-- FOOTER -->
         <footer class="footer">
             <nav class="nav">
                 <button class="nav-btn active" data-section="inicio">
-                    <span>🏠</span>
-                    <span>Inicio</span>
+                    <span>🏠</span>Inicio
                 </button>
                 <button class="nav-btn" data-section="envivo">
-                    <span>🔴</span>
-                    <span>En Vivo</span>
+                    <span>🔴</span>En Vivo
                 </button>
             </nav>
         </footer>
     </div>
 
     <script>
-        // Navegación entre secciones
         document.addEventListener('DOMContentLoaded', function() {
-            const navBtns = document.querySelectorAll('.nav-btn');
-            const sections = document.querySelectorAll('.section');
-
-            navBtns.forEach(btn => {
+            // Navegación
+            document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const targetSection = btn.dataset.section;
-                    
-                    navBtns.forEach(b => b.classList.remove('active'));
+                    const target = btn.dataset.section;
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                     btn.classList.add('active');
-                    
-                    sections.forEach(section => {
-                        section.classList.remove('active');
-                        if (section.id === targetSection) {
-                            section.classList.add('active');
-                        }
-                    });
+                    document.getElementById(target).classList.add('active');
                 });
             });
 
-            // Auto-play cuando entra en En Vivo
-            const envivoSection = document.getElementById('envivo');
-            const observer = new MutationObserver(function() {
-                if (envivoSection.classList.contains('active')) {
-                    setTimeout(() => {
-                        if (document.getElementById('video')) {
-                            playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8');
-                        }
-                    }, 500);
+            // Auto-play
+            const observer = new MutationObserver(() => {
+                if (document.getElementById('envivo').classList.contains('active')) {
+                    setTimeout(() => playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8'), 300);
                 }
             });
-            observer.observe(envivoSection, { attributes: true });
+            observer.observe(document.getElementById('envivo'), { attributes: true });
         });
 
-        // RETROTOONS PLAYER
+        // HLS Player
         let hls;
         function playStream(url) {
             const video = document.getElementById('video');
+            if (hls) hls.destroy();
             
-            if (hls) {
-                hls.destroy();
-                hls = null;
-            }
-
             if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
                 video.play();
             } else if (Hls.isSupported()) {
-                hls = new Hls({
-                    lowLatencyMode: true,
-                    backBufferLength: 30
-                });
-
+                hls = new Hls({ lowLatencyMode: true });
                 hls.loadSource(url);
                 hls.attachMedia(video);
-
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play();
-                });
-
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    console.log("HLS error:", data);
-                });
-            } else {
-                alert('Este dispositivo no soporta streaming HLS');
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
             }
         }
-
         window.playStream = playStream;
     </script>
 </body>
