@@ -30,9 +30,15 @@
     <style>
         /* RESET */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; width: 100%; overflow: hidden; }
+        html, body { 
+            height: 100%; 
+            width: 100%; 
+            overflow: hidden; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
 
-        /* APP */
+        /* APP - FULLSCREEN COMPLETO */
         .app {
             display: flex;
             flex-direction: column;
@@ -41,14 +47,23 @@
             width: 100vw;
             width: 100dvw;
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 0;
+            margin: 0;
         }
 
-        /* HEADER VIOLETA */
+        /* HEADER - CUBRE NOTCH ARRIBA */
         .header {
             background: linear-gradient(135deg, #8B5CF6 0%, #5d00a8 100%);
             color: white;
-            padding: calc(var(--safe-top) + 0.5rem) 1rem 1rem;
+            /* CUBRE EXACTO EL NOTCH */
+            padding-top: var(--safe-top);
+            padding-left: max(1rem, var(--safe-left));
+            padding-right: max(1rem, var(--safe-right));
+            padding-bottom: 1rem;
             text-align: center;
             box-shadow: 0 4px 20px rgba(139,92,246,0.4);
             z-index: 100;
@@ -66,13 +81,16 @@
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
 
-        /* MAIN */
+        /* MAIN CONTENT */
         .main-content {
             flex: 1;
             background: linear-gradient(135deg, #FCD34D 0%, #FBBF24 50%, #F59E0B 100%);
             overflow-y: auto;
+            /* NO padding bottom para que footer cubra todo */
             padding: 1rem;
-            padding-bottom: calc(var(--safe-bottom) + 1rem);
+            padding-top: 0.5rem;
+            /* Padding bottom SOLO safe-bottom para main */
+            padding-bottom: 0;
         }
 
         .section { display: none; min-height: 100%; }
@@ -195,13 +213,16 @@
             flex-shrink: 0;
         }
 
-        /* FOOTER - ICONOS BLANCOS */
+        /* FOOTER - CUBRE HOME INDICATOR ABAJO */
         .footer {
             background: linear-gradient(135deg, #8B5CF6 0%, #5d00a8 100%);
             box-shadow: 0 -4px 20px rgba(139,92,246,0.4);
             flex-shrink: 0;
             z-index: 100;
+            /* CUBRE EXACTO EL HOME INDICATOR */
             padding-bottom: var(--safe-bottom);
+            margin-bottom: 0;
+            position: relative;
         }
 
         .nav {
@@ -216,7 +237,7 @@
             flex: 1;
             background: none;
             border: none;
-            color: white; /* BLANCO */
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -231,7 +252,7 @@
         }
 
         .nav-btn span {
-            font-size: 1.4rem; /* Iconos más grandes */
+            font-size: 1.4rem;
         }
 
         .nav-btn.active {
@@ -241,16 +262,11 @@
         }
 
         .nav-btn:active { transform: scale(0.95); }
-
-        /* HOVER efecto */
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.15);
-        }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- HEADER -->
+        <!-- HEADER - CUBRE NOTCH ARRIBA -->
         <header class="header">
             <img src="https://github.com/crew37/RetrotoonsIos/raw/main/3599392_splash.png" alt="RetroToons">
         </header>
@@ -294,7 +310,7 @@
             </section>
         </main>
 
-        <!-- FOOTER - ICONOS BLANCOS -->
+        <!-- FOOTER - CUBRE HOME INDICATOR ABAJO -->
         <footer class="footer">
             <nav class="nav">
                 <button class="nav-btn active" data-section="inicio">
@@ -322,7 +338,7 @@
                 });
             });
 
-            // Auto-play En Vivo
+            // Auto-play
             const observer = new MutationObserver(() => {
                 if (document.getElementById('envivo').classList.contains('active')) {
                     setTimeout(() => playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8'), 300);
