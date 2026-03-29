@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RetroToons TV PWA</title>
     
-    <!-- iOS PWA Meta Tags - NOTCH FULLSCREEN -->
+    <!-- iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="RetroToons TV">
     <link rel="apple-touch-icon" href="Icon.png">
     
-    <!-- Safe areas CSS -->
+    <!-- Safe areas -->
     <style>
         :root {
             --safe-top: env(safe-area-inset-top);
@@ -21,24 +21,18 @@
         }
     </style>
     
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#8B5CF6">
     
-    <!-- Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
         /* RESET */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { 
-            height: 100%; 
-            width: 100%; 
-            overflow: hidden; 
-        }
+        html, body { height: 100%; width: 100%; overflow: hidden; }
 
-        /* APP - FULLSCREEN */
+        /* APP */
         .app {
             display: flex;
             flex-direction: column;
@@ -47,13 +41,10 @@
             width: 100vw;
             width: 100dvw;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
         }
 
-        /* HEADER VIOLETA - CUBRE NOTCH */
+        /* HEADER VIOLETA */
         .header {
             background: linear-gradient(135deg, #8B5CF6 0%, #5d00a8 100%);
             color: white;
@@ -75,7 +66,7 @@
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
 
-        /* MAIN AMARILLO */
+        /* MAIN */
         .main-content {
             flex: 1;
             background: linear-gradient(135deg, #FCD34D 0%, #FBBF24 50%, #F59E0B 100%);
@@ -136,7 +127,7 @@
             font-size: 1.2rem;
         }
 
-        /* RETROTOONS PLAYER */
+        /* RETROTOONS */
         .retrotoons-container {
             height: 100%;
             display: flex;
@@ -193,9 +184,7 @@
             cursor: pointer;
         }
 
-        .retrotoons-btn:active {
-            transform: scale(0.98);
-        }
+        .retrotoons-btn:active { transform: scale(0.98); }
 
         .retrotoons-footer {
             text-align: center;
@@ -206,7 +195,7 @@
             flex-shrink: 0;
         }
 
-        /* FOOTER VIOLETA */
+        /* FOOTER - ICONOS BLANCOS */
         .footer {
             background: linear-gradient(135deg, #8B5CF6 0%, #5d00a8 100%);
             box-shadow: 0 -4px 20px rgba(139,92,246,0.4);
@@ -227,31 +216,41 @@
             flex: 1;
             background: none;
             border: none;
-            color: rgba(255,255,255,0.9);
+            color: white; /* BLANCO */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 0.2rem;
             font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             padding: 0.4rem;
             border-radius: 12px;
         }
 
+        .nav-btn span {
+            font-size: 1.4rem; /* Iconos más grandes */
+        }
+
         .nav-btn.active {
-            color: white;
             background: rgba(255,255,255,0.25);
             backdrop-filter: blur(10px);
+            transform: scale(1.05);
         }
 
         .nav-btn:active { transform: scale(0.95); }
+
+        /* HOVER efecto */
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.15);
+        }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- HEADER - CUBRE NOTCH -->
+        <!-- HEADER -->
         <header class="header">
             <img src="https://github.com/crew37/RetrotoonsIos/raw/main/3599392_splash.png" alt="RetroToons">
         </header>
@@ -295,14 +294,16 @@
             </section>
         </main>
 
-        <!-- FOOTER -->
+        <!-- FOOTER - ICONOS BLANCOS -->
         <footer class="footer">
             <nav class="nav">
                 <button class="nav-btn active" data-section="inicio">
-                    <span>🏠</span>Inicio
+                    <span>🏠</span>
+                    <span>Inicio</span>
                 </button>
                 <button class="nav-btn" data-section="envivo">
-                    <span>🔴</span>En Vivo
+                    <span>🔴</span>
+                    <span>En Vivo</span>
                 </button>
             </nav>
         </footer>
@@ -321,7 +322,7 @@
                 });
             });
 
-            // Auto-play
+            // Auto-play En Vivo
             const observer = new MutationObserver(() => {
                 if (document.getElementById('envivo').classList.contains('active')) {
                     setTimeout(() => playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8'), 300);
