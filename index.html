@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-title" content="RetroToons">
     
     <!-- Icono para pantalla de inicio -->
-    <link rel="apple-touch-icon" href="Icon.png">
+    <link rel="apple-touch-icon" href="3599392_splash.png">
 
     <!-- Splash Screens -->
     <link rel="apple-touch-startup-image" href="3599392_splash.png">
@@ -135,6 +135,16 @@
             background: radial-gradient(circle at top, #333 0%, #000 100%);
             color: #fff;
             font-family: 'Orbitron', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Asegura el centrado horizontal */
+        }
+
+        .live-indicator-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
         }
 
         .live-indicator {
@@ -142,15 +152,16 @@
             align-items: center;
             background: #ff0000;
             color: white;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 0.7em;
-            margin-bottom: 10px;
+            font-size: 0.75em;
             animation: pulse 1.5s infinite;
         }
 
         .player-wrapper {
+            width: 100%;
+            max-width: 600px;
             background: #000;
             border: 2px solid #ffb300;
             border-radius: 12px;
@@ -171,6 +182,8 @@
             gap: 10px;
             justify-content: center;
             margin-top: 15px;
+            width: 100%;
+            max-width: 600px;
         }
 
         .btn-stream {
@@ -257,7 +270,10 @@
 
         <!-- SECCIÓN: EN VIVO -->
         <section id="envivo" class="view live-view">
-            <div class="live-indicator">● EN VIVO</div>
+            <div class="live-indicator-container">
+                <div class="live-indicator">● EN VIVO</div>
+            </div>
+            
             <h2 style="font-size: 1.2em; margin-bottom: 15px; letter-spacing: 1px;">RETROTOONS TV</h2>
             
             <div class="player-wrapper">
