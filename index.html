@@ -1,403 +1,184 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>RetroToons - PWA</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>RetroToons TV</title>
 
-    <!-- CONFIGURACIÓN PWA PARA IPHONE (iOS) -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="RetroToons">
-    
-    <!-- Icono para pantalla de inicio -->
-    <link rel="apple-touch-icon" href="Icon.png">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
-    <!-- Splash Screens -->
-    <link rel="apple-touch-startup-image" href="3599392_splash.png">
+<style>
+body {
+    margin: 0;
+    background: radial-gradient(circle at top, #222 0%, #000 60%);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
 
-    <!-- Librerías y Fuentes -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+/* SPLASH */
+#splash {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, #ffeb3b, #ff9800);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    color: #000;
+    z-index: 9999;
+}
 
-    <!-- Color de tema para la barra superior del sistema -->
-    <meta name="theme-color" content="#6200ea">
-    <link rel="manifest" id="manifest-link">
+/* HEADER */
+header {
+    text-align: center;
+    padding: 10px;
+    font-size: 22px;
+    background: linear-gradient(90deg, #ffeb3b, #ff9800);
+    color: #000;
+    box-shadow: 0 0 20px #ff9800;
+}
 
-    <style>
-        /* Estilos base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+/* PLAYER */
+#player-container {
+    background: #000;
+}
 
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            overscroll-behavior: none;
-        }
+video {
+    width: 100%;
+    height: auto;
+    max-height: 45vh;
+    background: #000;
+}
 
-        body {
-            font-family: 'Roboto', 'Arial', sans-serif;
-            background: #ffcc33; /* Fondo principal AMARILLO */
-            color: #222;
-            display: flex;
-            flex-direction: column;
-        }
+/* BUTTONS */
+#buttons {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
 
-        /* Header VIOLETA */
-        header {
-            width: 100%;
-            background: #6200ea; 
-            text-align: center;
-            padding: calc(10px + env(safe-area-inset-top)) 10px 10px 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 100;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
+button {
+    width: 45%;
+    height: 70px;
+    font-size: 18px;
+    border-radius: 14px;
+    border: none;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(180deg, #ffeb3b, #ff9800);
+    color: #000;
+    box-shadow: 0 0 12px rgba(255,152,0,.8);
+    transition: 0.2s;
+}
 
-        header img {
-            max-height: 70px;
-            width: auto;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-        }
+button.active {
+    background: linear-gradient(180deg, #fff176, #ffb74d);
+    box-shadow: 0 0 20px #fff176;
+    transform: scale(1.05);
+}
 
-        .view-container {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-        }
+button:active {
+    transform: scale(0.95);
+}
 
-        .view {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 20px;
-            padding-bottom: 100px;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            background: transparent; /* Permite ver el fondo amarillo del body */
-        }
-
-        .view.active {
-            display: flex;
-            flex-direction: column;
-            opacity: 1;
-            z-index: 10;
-        }
-
-        /* INICIO - Ajuste de colores para fondo amarillo */
-        #inicio {
-            justify-content: flex-start;
-            padding-top: 40px;
-        }
-
-        #inicio h1 {
-            color: #000;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            font-weight: 900;
-        }
-
-        .welcome-text {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-top: 20px;
-            line-height: 1.5;
-            color: #333;
-        }
-
-        .quote-box {
-            background: rgba(255, 255, 255, 0.4);
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px dashed #6200ea; /* Borde violeta para contrastar */
-            margin-top: 40px;
-        }
-
-        .custom-footer {
-            margin-top: auto;
-            padding: 40px 0;
-        }
-
-        .black-badge {
-            background-color: #000000;
-            color: #ffffff;
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 0.9em;
-            letter-spacing: 1px;
-        }
-
-        /* VISTA EN VIVO - Fondo oscuro para el reproductor */
-        .live-view {
-            background: rgba(0, 0, 0, 0.05); /* Sutil oscurecimiento sobre el amarillo */
-            color: #000;
-            font-family: 'Orbitron', sans-serif;
-            align-items: center;
-        }
-
-        .live-indicator-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
-
-        .live-indicator {
-            display: inline-flex;
-            align-items: center;
-            background: #ff0000;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.75em;
-            animation: pulse 1.5s infinite;
-        }
-
-        .player-wrapper {
-            width: 100%;
-            max-width: 600px;
-            background: #000;
-            border: 3px solid #6200ea; /* Borde violeta */
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(98, 0, 234, 0.3);
-            margin-bottom: 20px;
-            flex-shrink: 0;
-        }
-
-        video {
-            width: 100%;
-            display: block;
-            aspect-ratio: 16 / 9;
-            background: #000;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        .btn-stream {
-            flex: 1;
-            padding: 15px 5px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8em;
-            background: #6200ea; /* Botones violetas */
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            font-weight: bold;
-            box-shadow: 0 4px 0 #3700b3;
-            cursor: pointer;
-        }
-
-        /* Navbar VIOLETA - Ajustada al ras de abajo */
-        nav.bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            background: #6200ea; 
-            display: flex;
-            justify-content: space-around;
-            /* Se asegura de que el padding inferior incluya el área segura pero empiece desde el borde inferior real */
-            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 200;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
-            margin: 0; /* Aseguramos que no haya margen */
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.5); 
-            font-size: 0.75em;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            width: 50%;
-            cursor: pointer;
-        }
-
-        .nav-item.active {
-            color: #ffffff; 
-            transform: scale(1.05);
-        }
-
-        .nav-icon { 
-            width: 24px;
-            height: 24px;
-            margin-bottom: 4px;
-            fill: currentColor; 
-        }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-    </style>
+footer {
+    text-align: center;
+    padding: 6px;
+    font-size: 12px;
+    color: #ffb300;
+    opacity: .7;
+}
+</style>
 </head>
+
 <body>
 
-    <header id="main-header">
-        <img src="3599392_splash.png" alt="RetroToons! Logo">
-    </header>
+<div id="splash">RETROTOONS TV</div>
 
-    <div class="view-container">
-        <!-- SECCIÓN: INICIO -->
-        <section id="inicio" class="view active">
-            <h1>¡Bienvenido!</h1>
-            
-            <p class="welcome-text">
-                Tu canal favorito de caricaturas clásicas.<br>
-                Revive los mejores momentos de la animación retro.
-            </p>
-            
-            <div class="quote-box">
-                <p style="font-style: italic; font-weight: bold; color: #6200ea;">"¡Eso es todo amigos!"</p>
-            </div>
+<header>RETROTOONS TV</header>
 
-           
+<div id="player-container">
+    <video id="video" controls playsinline></video>
+</div>
 
-            <div class="custom-footer">
-                <div class="black-badge">
-                    © 2025 RetroToons
-                </div>
-            </div>
-        </section>
+<div id="buttons">
+    <button id="btn1" onclick="playStream(1)">
+        📺 Opción 1
+    </button>
 
-        <!-- SECCIÓN: EN VIVO -->
-        <section id="envivo" class="view live-view">
-            <div class="live-indicator-container">
-                <div class="live-indicator">● EN VIVO</div>
-            </div>
-            
-            <h2 style="font-size: 1.2em; margin-bottom: 15px; letter-spacing: 1px; color: #000;">RETROTOONS TV</h2>
-            
-            <div class="player-wrapper">
-                <video id="video" controls playsinline poster="3599392_splash.png"></video>
-            </div>
+    <button id="btn2" onclick="playStream(2)">
+        📺 Opción 2
+    </button>
+</div>
 
-            <div class="btn-group">
-                <button class="btn-stream" onclick="playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8')">
-                    📺 OPCIÓN 1
-                </button>
-                <button class="btn-stream" onclick="playStream('https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8')">
-                    📺 OPCIÓN 2
-                </button>
-            </div>
-        </section>
-    </div>
+<footer>Powered by RetroToons</footer>
 
-    <!-- NAVBAR VIOLETA -->
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="showView('inicio', this)">
-            <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            <span>Inicio</span>
-        </div>
-        <div class="nav-item" onclick="showView('envivo', this)">
-            <svg class="nav-icon" viewBox="0 0 24 24">
-                <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77.42-1.56.42-4.81.42-4.81s0-3.25-.42-4.81zM10 15V9l5.2 3L10 15z"/>
-            </svg>
-            <span>En Vivo</span>
-        </div>
-    </nav>
+<script>
+const video = document.getElementById('video');
+let hls;
 
-    <script>
-        const video = document.getElementById('video');
-        let hls;
+const streams = {
+    1: 'https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8',
+    2: 'https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8'
+};
 
-        function showView(viewId, element) {
-            if(viewId !== 'envivo') {
-                video.pause();
-            }
+function setActiveButton(id){
+    document.getElementById('btn1').classList.remove('active');
+    document.getElementById('btn2').classList.remove('active');
+    document.getElementById('btn'+id).classList.add('active');
+}
 
-            document.querySelectorAll('.view').forEach(v => {
-                v.classList.remove('active');
-                v.style.display = 'none';
-                v.scrollTop = 0;
-            });
-            
-            const selectedView = document.getElementById(viewId);
-            selectedView.style.display = 'flex';
-            setTimeout(() => selectedView.classList.add('active'), 10);
-            
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            element.classList.add('active');
+function playStream(id) {
+    const url = streams[id];
+    setActiveButton(id);
 
-            if(viewId === 'envivo') {
-                playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8');
-            }
-        }
+    if (hls) {
+        hls.destroy();
+        hls = null;
+    }
 
-        function playStream(url) {
-            if (hls) { hls.destroy(); hls = null; }
-            if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.play().catch(e => {});
-            } else if (Hls.isSupported()) {
-                hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => {}));
-            }
-        }
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url;
+        video.play();
+    } else if (Hls.isSupported()) {
+        hls = new Hls({
+            lowLatencyMode: true,
+            backBufferLength: 30
+        });
 
-        // PWA Manifest
-        const manifest = {
-            "name": "RetroToons TV",
-            "short_name": "RetroToons",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#ffcc33",
-            "theme_color": "#6200ea",
-            "icons": [{ "src": "3599392_splash.png", "sizes": "512x512", "type": "image/png" }]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-        document.getElementById('manifest-link').setAttribute('href', URL.createObjectURL(manifestBlob));
+        hls.loadSource(url);
+        hls.attachMedia(video);
 
-        // Service Worker (Fix para entornos restringidos)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    self.addEventListener('install', e => self.skipWaiting());
-                    self.addEventListener('activate', e => {
-                        e.waitUntil(caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k)))));
-                    });
-                    self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
-                `;
-                try {
-                    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-                    const swUrl = URL.createObjectURL(swBlob);
-                    navigator.serviceWorker.register(swUrl).catch(() => {});
-                } catch (e) {}
-            });
-        }
-    </script>
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            video.play();
+        });
+    } else {
+        alert('Este dispositivo no soporta HLS');
+    }
+}
+
+/* FULLSCREEN AL TOCAR VIDEO */
+video.addEventListener('click', () => {
+    if (video.requestFullscreen) {
+        video.requestFullscreen();
+    }
+});
+
+/* SPLASH + CANAL POR DEFECTO */
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('splash').style.display = 'none';
+        playStream(1);
+    }, 2000);
+});
+</script>
+
 </body>
-</html>
+</html>>
