@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-title" content="RetroToons">
     
     <!-- ESTA ES LA LÍNEA PARA EL ICONO EN IPHONE -->
-    <link rel="apple-touch-icon" href="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/RetroToonsTV/RetroToonsTV.github.io/main/icono.png">
 
     <!-- Fuentes y Reproductor -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -208,10 +208,10 @@
         /* ================= NAVBAR ================= */
         .navbar {
             position: fixed;
-            bottom: 0;
+            bottom: 0; /* CAMBIA ESTO: Ejemplo 10px para subirla un poco desde el borde */
             left: 0;
             right: 0;
-            height: 85px;
+            height: 70px; /* Ajusta la altura total de la barra aquí */
             background: rgba(26, 26, 26, 0.95);
             backdrop-filter: blur(10px);
             display: flex;
@@ -230,16 +230,21 @@
             transition: color 0.3s;
             cursor: pointer;
             padding: 10px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .navbtn.active {
             color: var(--primary);
         }
 
-        .navbtn span {
-            display: block;
-            font-size: 1.6rem;
+        .navbtn svg {
+            width: 28px;
+            height: 28px;
             margin-bottom: 4px;
+            fill: currentColor;
         }
 
         #video-error {
@@ -262,7 +267,7 @@
 <div id="inicio" class="screen active">
     <header>
         <!-- Icono cargado desde GitHub (Raw link) -->
-        <img src="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true" alt="RetroToons Logo" onerror="this.src='https://via.placeholder.com/300x150?text=RetroToons'">
+        <img src="https://raw.githubusercontent.com/RetroToonsTV/RetroToonsTV.github.io/main/icono.png" alt="RetroToons Logo" onerror="this.src='https://via.placeholder.com/300x150?text=RetroToons'">
     </header>
 
     <main>
@@ -304,11 +309,17 @@
 <!-- ================= NAVBAR ================= -->
 <nav class="navbar">
     <div class="navbtn active" id="nav-inicio" onclick="event.preventDefault(); showScreen('inicio')">
-        <span>🏠</span>
+        <!-- Icono de Casa SVG -->
+        <svg viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
         Inicio
     </div>
     <div class="navbtn" id="nav-envivo" onclick="event.preventDefault(); showScreen('envivo')">
-        <span>📺</span>
+        <!-- Icono de TV Retro SVG -->
+        <svg viewBox="0 0 24 24">
+            <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12zm-5-6l-7 4V7l7 4z"/>
+        </svg>
         En Vivo
     </div>
 </nav>
