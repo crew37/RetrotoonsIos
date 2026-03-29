@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* ESTILOS EMBEBIDOS PARA SIMPLIFICAR DESPLIEGUE */
+        /* ESTILOS EMBEBIDOS - HEADER FIJO */
         * {
             margin: 0;
             padding: 0;
@@ -32,26 +32,38 @@
             background: #fff;
             height: 100vh;
             overflow: hidden;
+            padding-top: env(safe-area-inset-top); /* Safe area iPhone */
         }
 
         .app {
             display: flex;
             flex-direction: column;
             height: 100vh;
+            height: 100dvh; /* Dynamic viewport */
         }
 
-        /* Header Violeta */
+        /* Header Violeta - CUBRE TODO */
         .header {
             background: linear-gradient(135deg, #8B5CF6 0%, #5d00a8 100%);
             color: white;
-            padding: 1rem;
+            padding: 1.5rem 1rem 1rem;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+            /* Safe areas para iPhone */
+            padding-top: max(env(safe-area-inset-top), 1rem);
+            padding-bottom: env(safe-area-inset-bottom, 0.5rem);
         }
 
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .header img {
+            display: block;
+            margin: 0 auto;
+            max-width: 35%;
+            max-height: 60px;
+            height: auto;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
 
         /* Contenido Principal Amarillo */
@@ -59,7 +71,11 @@
             flex: 1;
             background: linear-gradient(135deg, #FCD34D 0%, #FBBF24 50%, #F59E0B 100%);
             overflow-y: auto;
-            padding: 1rem;
+            /* Safe areas */
+            padding-top: env(safe-area-inset-top, 1rem);
+            padding-bottom: env(safe-area-inset-bottom, 1rem);
+            padding-left: 1rem;
+            padding-right: 1rem;
         }
 
         .section {
@@ -165,11 +181,12 @@
             border-radius: 14px;
             border: none;
             font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(180deg, #5d00a8, #5d00a8);
-            color: #000;
-            box-shadow: 0 0 12px rgba(255,152,0,.8);
+            background: linear-gradient(180deg, #5d00a8, #8B5CF6);
+            color: white;
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.8);
             cursor: pointer;
             font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
 
         .retrotoons-btn:active {
@@ -185,10 +202,14 @@
             flex-shrink: 0;
         }
 
-        /* Footer Violeta */
+        /* Footer Violeta - FIJO */
         .footer {
             background: linear-gradient(135deg, #8B5CF6 0%, #5d00a8 100%);
-            box-shadow: 0 -2px 10px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 -4px 20px rgba(139, 92, 246, 0.4);
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+            padding-bottom: env(safe-area-inset-bottom, 0.5rem);
         }
 
         .nav {
@@ -196,13 +217,14 @@
             height: 70px;
             max-width: 400px;
             margin: 0 auto;
+            padding: 0.5rem 1rem;
         }
 
         .nav-btn {
             flex: 1;
             background: none;
             border: none;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -212,25 +234,36 @@
             cursor: pointer;
             transition: all 0.3s ease;
             padding: 0.5rem;
+            border-radius: 12px;
         }
 
         .nav-btn.active {
             color: white;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
         }
 
         .nav-btn:active {
             transform: scale(0.95);
         }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header {
+                padding: 1.2rem 0.8rem 1rem;
+            }
+            
+            .main-content {
+                padding: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- Header Violeta -->
+        <!-- Header Violeta - AHORA CUBRE TODO -->
         <header class="header">
-            <img src="https://github.com/crew37/RetrotoonsIos/blob/main/3599392_splash.png?raw=true" style="display: block; margin: 0 auto; max-width: 30%; height: auto;">
-
+            <img src="https://github.com/crew37/RetrotoonsIos/raw/main/3599392_splash.png" alt="RetroToons Logo">
         </header>
 
         <!-- Contenido Principal -->
@@ -238,12 +271,14 @@
             <!-- Sección Inicio -->
             <section id="inicio" class="section active">
                 <div class="content">
-                    <div style="display: flex; justify-content: center;">
- <img src="https://github.com/crew37/RetrotoonsIos/blob/main/Icon.png?raw=true" style="display: block; margin: 0 auto; max-width: 100%; height: auto;">
-
-</div>
-
-                    <p>Bienvenido a RetroToons TV. Disfruta de lo mejor de la TV retro en vivo.</p>
+                    <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                        <img src="https://github.com/crew37/RetrotoonsIos/raw/main/Icon.png" alt="Icono" style="max-width: 120px; height: auto;">
+                    </div>
+                    <h2 style="display: none;">🏠 Inicio</h2>
+                    <p style="text-align: center; font-size: 1.1rem; color: #1F2937; margin-bottom: 2rem;">
+                        Bienvenido a <strong>RetroToons TV</strong><br>
+                        Disfruta de lo mejor de la TV retro en vivo.
+                    </p>
                     <div class="cards">
                         <div class="card">
                             <h3>📺 Canales en Vivo</h3>
@@ -288,7 +323,7 @@
             </section>
         </main>
 
-        <!-- Footer Violeta con Navegación -->
+        <!-- Footer Violeta FIJO -->
         <footer class="footer">
             <nav class="nav">
                 <button class="nav-btn active" data-section="inicio">
@@ -373,7 +408,6 @@
             }
         }
 
-        // Hacer función global
         window.playStream = playStream;
     </script>
 </body>
