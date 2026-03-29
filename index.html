@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-title" content="RetroToons">
     
     <!-- Icono para pantalla de inicio -->
-    <link rel="apple-touch-icon" href="Icon.png">
+    <link rel="apple-touch-icon" href="3599392_splash.png">
 
     <!-- Splash Screens -->
     <link rel="apple-touch-startup-image" href="3599392_splash.png">
@@ -214,18 +214,22 @@
             cursor: pointer;
         }
 
-        /* Navbar VIOLETA */
+        /* Navbar VIOLETA - Ajustada al ras de abajo */
         nav.bottom-nav {
             position: fixed;
             bottom: 0;
+            left: 0;
+            right: 0;
             width: 100%;
             background: #6200ea; 
             display: flex;
             justify-content: space-around;
-            padding: 10px 0 calc(10px + env(safe-area-inset-bottom)) 0;
+            /* Se asegura de que el padding inferior incluya el área segura pero empiece desde el borde inferior real */
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 200;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
+            margin: 0; /* Aseguramos que no haya margen */
         }
 
         .nav-item {
@@ -276,7 +280,13 @@
                 <p style="font-style: italic; font-weight: bold; color: #6200ea;">"¡Eso es todo amigos!"</p>
             </div>
 
-            
+            <div style="margin-top: 30px; text-align: left; padding: 20px; background: rgba(255,255,255,0.4); border-radius: 10px; border: 1px solid #6200ea;">
+                <h3 style="margin-bottom: 10px; color: #000;">Programación del día</h3>
+                <p>• Los Picapiedra - 09:00 AM</p>
+                <p>• El Oso Yogi - 10:30 AM</p>
+                <p>• Scooby-Doo - 12:00 PM</p>
+                <p>• Los Supersónicos - 01:30 PM</p>
+            </div>
 
             <div class="custom-footer">
                 <div class="black-badge">
