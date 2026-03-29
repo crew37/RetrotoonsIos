@@ -1,145 +1,256 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RetroToons</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>RetroToons | Clásicos Animados</title>
 
-<link rel="manifest" href="manifest.json">
+    <!-- Meta tags para PWA y iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RetroToons">
+    
+    <!-- Fuentes y Reproductor -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-<!-- iOS PWA -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="RetroToons">
-<link rel="apple-touch-icon" href="icons/icon-180.png">
+    <style>
+        :root {
+            --primary: #ffcc33;
+            --primary-dark: #ffb300;
+            --accent: #ff9800;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --text-light: #ffffff;
+            --text-muted: #aaaaaa;
+            --nav-bg: #1a1a1a;
+        }
 
-<!-- Splash iPhone 14 Pro -->
-<link rel="apple-touch-startup-image" href="splash/iphone14pro.png"
-media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Evita scroll global del body */
+        }
 
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
 
-body {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    font-family: Arial, sans-serif;
-}
+        /* Contenedor de Pantallas */
+        .screen {
+            display: none;
+            height: 100vh;
+            width: 100%;
+            overflow-y: auto; /* El scroll solo ocurre dentro de la pantalla si es necesario */
+            padding-bottom: 100px;
+            animation: fadeIn 0.3s ease-in-out;
+            -webkit-overflow-scrolling: touch;
+        }
 
-/* Pantallas */
-.screen {
-    display: none;
-    min-height: 100vh;
-    padding-bottom: 90px;
-}
-.active {
-    display: block;
-}
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-/* ================= INICIO ================= */
-#inicio {
-    background: #ffcc33;
-    color: #222;
-    display: flex;
-    flex-direction: column;
-}
+        .active {
+            display: flex;
+            flex-direction: column;
+        }
 
-#inicio header {
-    width: 100%;
-    background: #ffb300;
-    text-align: center;
-    padding: 20px 10px;
-}
+        /* ================= INICIO ================= */
+        #inicio {
+            background: linear-gradient(135deg, #ffcc33 0%, #ff9800 100%);
+            color: #222;
+        }
 
-#inicio header img {
-    max-width: 300px;
-    width: 80%;
-}
+        #inicio header {
+            padding: 40px 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
 
-#inicio main {
-    text-align: center;
-    padding: 40px 20px;
-}
+        #inicio header img {
+            max-width: 280px;
+            width: 70%;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+            border-radius: 20px;
+        }
 
-#inicio footer {
-    margin-top: auto;
-    width: 100%;
-    text-align: center;
-    padding: 15px;
-    background: #222;
-    color: #fff;
-}
+        #inicio main {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            background: white;
+            border-radius: 40px 40px 0 0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+        }
 
-/* ================= EN VIVO ================= */
-#envivo {
-    background: radial-gradient(circle at top, #222 0%, #000 60%);
-    color: #fff;
-    font-family: 'Orbitron', sans-serif;
-}
+        .welcome-card {
+            padding: 30px 10px;
+        }
 
-#envivo header {
-    text-align: center;
-    padding: 10px;
-    font-size: 22px;
-    background: linear-gradient(90deg, #ffeb3b, #ff9800);
-    color: #000;
-}
+        .welcome-card h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
 
-video {
-    width: 100%;
-    max-height: 45vh;
-    background: #000;
-}
+        .welcome-card p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
 
-#buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px;
-}
+        .btn-main {
+            margin-top: 30px;
+            background: var(--bg-dark);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: transform 0.2s;
+            cursor: pointer;
+            border: none;
+        }
 
-#buttons button {
-    width: 45%;
-    height: 70px;
-    font-size: 18px;
-    border-radius: 14px;
-    border: none;
-    font-family: 'Orbitron', sans-serif;
-    background: linear-gradient(180deg, #ffeb3b, #ff9800);
-    color: #000;
-}
+        .btn-main:active {
+            transform: scale(0.95);
+        }
 
-/* ================= NAVBAR ================= */
-.navbar {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 75px;
-    background: #111;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: 1px solid #333;
-}
+        /* ================= EN VIVO ================= */
+        #envivo {
+            background: #000;
+        }
 
-.navbtn {
-    color: white;
-    font-size: 13px;
-    text-align: center;
-}
+        #envivo header {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            background: linear-gradient(to bottom, #222, #000);
+            border-bottom: 2px solid var(--primary);
+            flex-shrink: 0;
+        }
 
-.navbtn span {
-    display: block;
-    font-size: 22px;
-}
-</style>
+        .video-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 0 30px rgba(255, 204, 51, 0.2);
+        }
+
+        .channel-info {
+            padding: 20px;
+        }
+
+        .channel-info h2 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .channel-info p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px;
+        }
+
+        .option-btn {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            color: white;
+            padding: 20px 10px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .option-btn.active-stream {
+            border-color: var(--primary);
+            background: rgba(255, 204, 51, 0.1);
+        }
+
+        /* ================= NAVBAR ================= */
+        .navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 85px;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: env(safe-area-inset-bottom);
+            border-top: 1px solid #333;
+            z-index: 1000;
+        }
+
+        .navbtn {
+            color: var(--text-muted);
+            text-align: center;
+            font-size: 0.75rem;
+            flex: 1;
+            transition: color 0.3s;
+            cursor: pointer;
+            padding: 10px 0;
+        }
+
+        .navbtn.active {
+            color: var(--primary);
+        }
+
+        .navbtn span {
+            display: block;
+            font-size: 1.6rem;
+            margin-bottom: 4px;
+        }
+
+        #video-error {
+            display: none;
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+    </style>
 </head>
 
 <body>
@@ -147,88 +258,119 @@ video {
 <!-- ================= INICIO ================= -->
 <div id="inicio" class="screen active">
     <header>
-        <img src="https://i.ibb.co/tPHM2bMt/icono.png">
+        <img src="https://i.ibb.co/tPHM2bMt/icono.png" alt="RetroToons Logo" onerror="this.src='https://via.placeholder.com/300x150?text=RetroToons'">
     </header>
 
     <main>
-        <h1>¡Bienvenido a RetroToons!</h1>
-        <p>
-            Tu canal favorito de caricaturas clásicas.<br>
-            Disfruta de la mejor animación retro.
-        </p>
+        <div class="welcome-card">
+            <h1>¡Bienvenido a RetroToons!</h1>
+            <p>
+                
+Tu canal favorito de caricaturas clásicas.
+Disfruta de la mejor animación retro.
+            </p>
+                    </div>
     </main>
-
-    <footer>
-        © 2025 RetroToons
-    </footer>
 </div>
 
 <!-- ================= EN VIVO ================= -->
 <div id="envivo" class="screen">
     <header>RETROTOONS TV</header>
 
-    <video id="video" controls playsinline></video>
+    <div class="video-container">
+        <video id="video" controls playsinline poster="https://via.placeholder.com/640x360/000000/FFFFFF?text=Cargando+Stream..."></video>
+        <div id="video-error">Error al cargar el canal. Intenta con otra opción.</div>
+    </div>
 
-    <div id="buttons">
-        <button onclick="playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8')">
-            📺 Opción 1
-        </button>
+    <div class="channel-info">
+        <h2>Transmisión en Vivo</h2>
+        <p>Selecciona una señal alternativa si tienes problemas.</p>
+    </div>
 
-        <button onclick="playStream('https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8')">
-            📺 Opción 2
-        </button>
+    <div class="options-grid">
+        <div class="option-btn active-stream" id="opt1" onclick="event.preventDefault(); playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8', 'opt1')">
+            <span>📡</span><br>Señal Principal
+        </div>
+
+        <div class="option-btn" id="opt2" onclick="event.preventDefault(); playStream('https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8', 'opt2')">
+            <span>🛰️</span><br>Señal Espejo
+        </div>
     </div>
 </div>
 
 <!-- ================= NAVBAR ================= -->
-<div class="navbar">
-    <div class="navbtn" onclick="showScreen('inicio')">
+<nav class="navbar">
+    <div class="navbtn active" id="nav-inicio" onclick="event.preventDefault(); showScreen('inicio')">
         <span>🏠</span>
         Inicio
     </div>
-    <div class="navbtn" onclick="showScreen('envivo')">
+    <div class="navbtn" id="nav-envivo" onclick="event.preventDefault(); showScreen('envivo')">
         <span>📺</span>
         En Vivo
     </div>
-</div>
+</nav>
 
 <script>
-function showScreen(screen) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screen).classList.add('active');
-}
+    const video = document.getElementById('video');
+    const errorMsg = document.getElementById('video-error');
+    let hls;
 
-const video = document.getElementById('video');
-let hls;
-
-function playStream(url) {
-    if (hls) {
-        hls.destroy();
-        hls = null;
-    }
-
-    if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = url;
-        video.play();
-    } else if (Hls.isSupported()) {
-        hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            video.play();
+    function showScreen(screenId) {
+        // Detener scroll si existiera
+        window.scrollTo(0, 0);
+        
+        // Cambiar visibilidad de pantallas
+        document.querySelectorAll('.screen').forEach(s => {
+            s.classList.remove('active');
+            s.scrollTop = 0; // Reset scroll interno de la pantalla
         });
+        
+        const targetScreen = document.getElementById(screenId);
+        targetScreen.classList.add('active');
+
+        // Actualizar Navbar
+        document.querySelectorAll('.navbtn').forEach(b => b.classList.remove('active'));
+        const navBtn = document.getElementById('nav-' + screenId);
+        if(navBtn) navBtn.classList.add('active');
     }
-}
 
-/* Canal automático */
-window.addEventListener('load', () => {
-    playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8');
-});
+    function playStream(url, btnId) {
+        // Manejo visual de botones
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active-stream'));
+        if(btnId) {
+            const btn = document.getElementById(btnId);
+            if(btn) btn.classList.add('active-stream');
+        }
 
-/* Service Worker */
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-}
+        errorMsg.style.display = 'none';
+
+        if (hls) {
+            hls.destroy();
+        }
+
+        if (Hls.isSupported()) {
+            hls = new Hls({
+                capLevelToPlayerSize: true,
+                autoStartLoad: true
+            });
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                video.play().catch(() => console.log("Auto-play bloqueado"));
+            });
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal) errorMsg.style.display = 'block';
+            });
+        } 
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = url;
+            video.addEventListener('loadedmetadata', () => video.play(), { once: true });
+        }
+    }
+
+    window.addEventListener('load', () => {
+        playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8', 'opt1');
+    });
 </script>
 
 </body>
