@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#6a00ff">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-512.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="splash.png">
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
@@ -21,9 +21,10 @@ font-family: Arial, sans-serif;
 background:#ffd800;
 padding-top:env(safe-area-inset-top);
 padding-bottom:env(safe-area-inset-bottom);
+overflow-x:hidden;
 }
 
-/* Fondo violeta completo */
+/* Fondo violeta */
 body::before{
 content:"";
 position:fixed;
@@ -32,6 +33,17 @@ left:0;
 width:100%;
 height:100%;
 background:#6a00ff;
+z-index:-2;
+}
+
+/* Sombra entre violeta y amarillo */
+body::after{
+content:"";
+position:fixed;
+top:110px;
+width:100%;
+height:30px;
+background:linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
 z-index:-1;
 }
 
@@ -47,9 +59,16 @@ display:flex;
 justify-content:center;
 align-items:center;
 z-index:999;
+animation: fadeOut 1s ease forwards;
+animation-delay:2s;
 }
+
 #splash img{
 width:200px;
+}
+
+@keyframes fadeOut{
+to{opacity:0; visibility:hidden;}
 }
 
 /* HEADER */
@@ -57,52 +76,41 @@ width:200px;
 position:fixed;
 top:0;
 width:100%;
-height:calc(95px + env(safe-area-inset-top));
+height:calc(90px + env(safe-area-inset-top));
 background:#6a00ff;
 display:flex;
 justify-content:center;
 align-items:flex-end;
 padding-bottom:10px;
 z-index:10;
-box-shadow:0 6px 12px rgba(0,0,0,0.3);
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
+
 .header img{
 height:50px;
 }
 
-/* Sombras transición */
-.top-shadow{
-position:fixed;
-top:calc(95px + env(safe-area-inset-top));
-width:100%;
-height:20px;
-background:linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0));
-z-index:9;
-}
-
-.bottom-shadow{
-position:fixed;
-bottom:calc(95px + env(safe-area-inset-bottom));
-width:100%;
-height:20px;
-background:linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.25));
-z-index:9;
-}
-
-/* CONTENIDO */
+/* SECCIONES */
 .section{
 display:none;
-padding-top:150px;
-padding-bottom:160px;
+padding-top:140px;
+padding-bottom:150px;
 text-align:center;
 background:#ffd800;
 min-height:100vh;
+animation:fade 0.3s;
 }
+
+@keyframes fade{
+from{opacity:0;}
+to{opacity:1;}
+}
+
 .active{
 display:block;
 }
 
-/* BOTONES BLANCOS */
+/* BOTONES */
 .menu-btn{
 background:white;
 border:none;
@@ -119,6 +127,7 @@ video{
 width:90%;
 border-radius:12px;
 margin-top:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
 }
 
 /* BOTONES CANALES */
@@ -137,14 +146,14 @@ font-size:16px;
 position:fixed;
 bottom:0;
 width:100%;
-height:calc(95px + env(safe-area-inset-bottom));
+height:calc(90px + env(safe-area-inset-bottom));
 background:#6a00ff;
 display:flex;
 justify-content:space-around;
 align-items:flex-start;
 padding-top:8px;
 padding-bottom:env(safe-area-inset-bottom);
-box-shadow:0 -6px 12px rgba(0,0,0,0.3);
+box-shadow:0 -4px 10px rgba(0,0,0,0.3);
 }
 
 .nav-item{
@@ -153,11 +162,15 @@ flex-direction:column;
 align-items:center;
 color:white;
 font-size:12px;
-opacity:0.7;
+opacity:0.6;
+transition:0.2s;
 }
+
 .nav-item.active{
 opacity:1;
+transform:scale(1.1);
 }
+
 .nav-item svg{
 width:24px;
 height:24px;
@@ -170,22 +183,18 @@ margin-bottom:4px;
 
 <!-- SPLASH -->
 <div id="splash">
-<img src="logo.png">
+<img src="splash.png">
 </div>
 
 <!-- HEADER -->
 <div class="header">
-<img src="logo.png">
+<img src="splash.png">
 </div>
-
-<div class="top-shadow"></div>
 
 <!-- INICIO -->
 <div id="inicio" class="section active">
 <h2>Inicio</h2>
-<button class="menu-btn" onclick="goVivo()">
-Ir a En Vivo
-</button>
+<button class="menu-btn" onclick="goVivo()">Ir a En Vivo</button>
 </div>
 
 <!-- EN VIVO -->
@@ -196,16 +205,10 @@ Ir a En Vivo
 
 <br>
 
-<button class="channel-btn" onclick="playStream(1)">
-Opción 1
-</button>
+<button class="channel-btn" onclick="playStream(1)">Opción 1</button>
+<button class="channel-btn" onclick="playStream(2)">Opción 2</button>
 
-<button class="channel-btn" onclick="playStream(2)">
-Opción 2
-</button>
 </div>
-
-<div class="bottom-shadow"></div>
 
 <!-- NAVBAR -->
 <div class="navbar">
@@ -227,11 +230,6 @@ En Vivo
 </div>
 
 <script>
-/* Splash */
-setTimeout(()=>{
-document.getElementById("splash").style.display="none";
-},2000);
-
 function showSection(id){
 document.querySelectorAll('.section').forEach(sec=>{
 sec.classList.remove('active');
@@ -243,6 +241,7 @@ function goInicio(){
 showSection('inicio');
 document.getElementById('btnInicio').classList.add('active');
 document.getElementById('btnVivo').classList.remove('active');
+document.getElementById('video').pause();
 }
 
 function goVivo(){
@@ -252,7 +251,7 @@ document.getElementById('btnVivo').classList.add('active');
 playStream(1);
 }
 
-/* STREAM M3U8 */
+/* STREAM */
 function playStream(option){
 let url="";
 
@@ -273,20 +272,9 @@ video.src=url;
 }
 }
 
-/* Service Worker */
+/* SERVICE WORKER */
 if ('serviceWorker' in navigator) {
-const swCode = `
-const CACHE_NAME = 'retrotoons-v1';
-self.addEventListener('install', e => {
-e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['./'])));
-});
-self.addEventListener('fetch', e => {
-e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
-});
-`;
-const blob = new Blob([swCode], { type: 'text/javascript' });
-const swURL = URL.createObjectURL(blob);
-navigator.serviceWorker.register(swURL);
+navigator.serviceWorker.register('sw.js');
 }
 </script>
 
