@@ -3,81 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
 <title>RetroToons TV</title>
 
-<meta name="theme-color" content="#6a00ff">
+<!-- PWA iPhone -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="logo.png">
-<link rel="apple-touch-startup-image" href="splash.png">
+<meta name="theme-color" content="#6a00ff">
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
+/* SAFE AREAS + BACKGROUND */
 body{
 margin:0;
 font-family: Arial, sans-serif;
 background:#ffd800;
-overflow-x:hidden;
 padding-top:env(safe-area-inset-top);
 padding-bottom:env(safe-area-inset-bottom);
+}
+
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#6a00ff;
+z-index:-1;
 }
 
 /* HEADER */
 .header{
 position:fixed;
-top:env(safe-area-inset-top);
+top:0;
 width:100%;
-height:70px;
+height:calc(70px + env(safe-area-inset-top));
 background:#6a00ff;
 display:flex;
-align-items:center;
+align-items:flex-end;
 justify-content:center;
+padding-bottom:10px;
 z-index:10;
-box-shadow:0 2px 10px rgba(0,0,0,0.3);
 }
 
-.logo{
-height:45px;
+.header img{
+height:40px;
 }
 
-/* NAVBAR INFERIOR */
-.navbar{
-position:fixed;
-bottom:0;
-width:100%;
-height:85px;
-background:#6a00ff;
-display:flex;
-justify-content:space-around;
-align-items:center;
-padding-bottom:env(safe-area-inset-bottom);
-box-shadow:0 -2px 10px rgba(0,0,0,0.3);
-}
-
-/* BOTONES MENU */
-.nav-btn{
-background:white;
-border:none;
-padding:12px 28px;
-border-radius:25px;
-font-size:16px;
-font-weight:bold;
-box-shadow:0 5px 12px rgba(0,0,0,0.3);
-}
-
-/* SECCIONES */
+/* SECTIONS */
 .section{
 display:none;
 padding-top:120px;
 padding-bottom:140px;
 text-align:center;
-animation:fade 0.4s;
-}
-
-@keyframes fade{
-from{opacity:0; transform:translateY(10px);}
-to{opacity:1; transform:translateY(0);}
 }
 
 .active{
@@ -86,144 +66,222 @@ display:block;
 
 /* VIDEO */
 video{
-width:92%;
-border-radius:15px;
-margin-top:20px;
-background:black;
+width:90%;
+border-radius:12px;
+margin-top:10px;
 }
 
-/* BOTONES CANALES */
-.channel{
+/* CHANNEL BUTTONS */
+.channel-btn{
 background:#6a00ff;
 color:white;
 border:none;
-padding:14px 22px;
+padding:12px 20px;
 margin:10px;
-border-radius:18px;
+border-radius:10px;
 font-size:16px;
-font-weight:bold;
 }
 
-.channel.activeChannel{
-background:white;
-color:#6a00ff;
+/* NAVBAR APP STYLE */
+.navbar{
+position:fixed;
+bottom:0;
+width:100%;
+height:calc(90px + env(safe-area-inset-bottom));
+background:#6a00ff;
+display:flex;
+justify-content:space-around;
+align-items:flex-start;
+padding-top:8px;
+padding-bottom:env(safe-area-inset-bottom);
+box-shadow:0 -4px 20px rgba(0,0,0,0.4);
+}
+
+.nav-item{
+display:flex;
+flex-direction:column;
+align-items:center;
+color:white;
+font-size:12px;
+opacity:0.6;
+transition:0.3s;
+}
+
+.nav-item svg{
+width:24px;
+height:24px;
+margin-bottom:4px;
+}
+
+.nav-item.active{
+opacity:1;
+transform:scale(1.05);
+}
+
+.nav-item:active{
+transform:scale(0.9);
+}
+
+/* SPLASH */
+#splash{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#ffd800;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+#splash img{
+width:200px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- SPLASH -->
+<div id="splash">
+<img src="logo.png">
+</div>
+
 <!-- HEADER -->
 <div class="header">
-<img src="logo.png" class="logo">
+<img src="logo.png">
 </div>
 
 <!-- INICIO -->
 <div id="inicio" class="section active">
-<h2>Inicio</h2>
-<p>Bienvenido a RetroToons TV</p>
+<h2>Bienvenido a RetroToons</h2>
+<p>Clásicos animados 24/7</p>
 </div>
 
 <!-- EN VIVO -->
 <div id="envivo" class="section">
 <h2>En Vivo</h2>
 
-<video id="video" controls autoplay playsinline></video>
+<video id="video" controls autoplay></video>
 
 <br>
 
-<button class="channel" id="ch1"
-onclick="playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8','ch1')">
+<button class="channel-btn" onclick="playStream(1)">
 Opción 1
 </button>
 
-<button class="channel" id="ch2"
-onclick="playStream('https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8','ch2')">
+<button class="channel-btn" onclick="playStream(2)">
 Opción 2
 </button>
 
 </div>
 
-<!-- MENU -->
+<!-- NAVBAR -->
 <div class="navbar">
-<button class="nav-btn" onclick="showSection('inicio')">Inicio</button>
-<button class="nav-btn" onclick="showSection('envivo')">En Vivo</button>
+
+<div class="nav-item active" id="btnInicio" onclick="goInicio()">
+<svg viewBox="0 0 24 24" fill="white">
+<path d="M12 3l9 8h-3v9h-5v-6H11v6H6v-9H3z"/>
+</svg>
+Inicio
+</div>
+
+<div class="nav-item" id="btnVivo" onclick="goVivo()">
+<svg viewBox="0 0 24 24" fill="white">
+<path d="M21 17V5H3v12h18zm0-14c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2L1 5c0-1.1.9-2 2-2h18z"/>
+</svg>
+En Vivo
+</div>
+
 </div>
 
 <script>
-var hls;
+/* SPLASH */
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+},2000);
 
+/* VIBRATION */
+function vibrar(){
+if(navigator.vibrate){
+navigator.vibrate(30);
+}
+}
+
+/* SECTIONS */
 function showSection(id){
 document.querySelectorAll('.section').forEach(sec=>{
 sec.classList.remove('active');
 });
 document.getElementById(id).classList.add('active');
-
-if(id === "envivo"){
-setTimeout(()=>{
-playStream('https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8','ch1');
-},500);
-}
 }
 
-function playStream(url,btn){
-var video = document.getElementById('video');
-
-document.querySelectorAll('.channel').forEach(b=>{
-b.classList.remove('activeChannel');
-});
-document.getElementById(btn).classList.add('activeChannel');
-
-if(hls){
-hls.destroy();
+/* NAVIGATION */
+function goInicio(){
+vibrar();
+showSection('inicio');
+document.getElementById('btnInicio').classList.add('active');
+document.getElementById('btnVivo').classList.remove('active');
 }
+
+function goVivo(){
+vibrar();
+showSection('envivo');
+document.getElementById('btnInicio').classList.remove('active');
+document.getElementById('btnVivo').classList.add('active');
+playStream(1);
+}
+
+/* STREAM */
+function playStream(option){
+let url="";
+
+if(option==1){
+url="https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8";
+}else{
+url="https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8";
+}
+
+const video=document.getElementById('video');
 
 if(Hls.isSupported()){
-hls = new Hls();
+const hls=new Hls();
 hls.loadSource(url);
 hls.attachMedia(video);
 }else{
-video.src = url;
-}
-
-video.play();
-
-if(video.requestFullscreen){
-video.requestFullscreen();
+video.src=url;
 }
 }
-
-/* MANIFEST AUTOMÁTICO */
-const manifest = {
-"name": "RetroToons TV",
-"short_name": "RetroToons",
-"start_url": ".",
-"display": "standalone",
-"background_color": "#ffd800",
-"theme_color": "#6a00ff",
-"icons": [{
-"src": "logo.png",
-"sizes": "192x192",
-"type": "image/png"
-}]
-};
-
-const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-const manifestURL = URL.createObjectURL(blob);
-const link = document.createElement('link');
-link.rel = 'manifest';
-link.href = manifestURL;
-document.head.appendChild(link);
 
 /* SERVICE WORKER */
-if('serviceWorker' in navigator){
-const sw = `
-self.addEventListener('install', e => { self.skipWaiting(); });
-self.addEventListener('fetch', e => {});
+if ('serviceWorker' in navigator) {
+
+const swCode = `
+const CACHE_NAME = 'retrotoons-v1';
+
+self.addEventListener('install', event => {
+event.waitUntil(
+caches.open(CACHE_NAME).then(cache => {
+return cache.addAll(['./']);
+})
+);
+});
+
+self.addEventListener('fetch', event => {
+event.respondWith(
+caches.match(event.request).then(response => {
+return response || fetch(event.request);
+})
+);
+});
 `;
-const swBlob = new Blob([sw], {type: 'text/javascript'});
-const swURL = URL.createObjectURL(swBlob);
+
+const blob = new Blob([swCode], { type: 'text/javascript' });
+const swURL = URL.createObjectURL(blob);
 navigator.serviceWorker.register(swURL);
+
 }
 </script>
 
