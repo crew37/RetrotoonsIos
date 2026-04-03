@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
 <title>RetroToons TV</title>
 
 <!-- PWA iPhone -->
@@ -14,7 +13,6 @@
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
-/* SAFE AREAS + BACKGROUND */
 body{
 margin:0;
 font-family: Arial, sans-serif;
@@ -23,6 +21,7 @@ padding-top:env(safe-area-inset-top);
 padding-bottom:env(safe-area-inset-bottom);
 }
 
+/* Fondo violeta completo */
 body::before{
 content:"";
 position:fixed;
@@ -39,29 +38,42 @@ z-index:-1;
 position:fixed;
 top:0;
 width:100%;
-height:calc(70px + env(safe-area-inset-top));
+height:calc(80px + env(safe-area-inset-top));
 background:#6a00ff;
 display:flex;
-align-items:flex-end;
 justify-content:center;
+align-items:flex-end;
 padding-bottom:10px;
+color:white;
+font-size:20px;
+font-weight:bold;
 z-index:10;
 }
 
-.header img{
-height:40px;
-}
-
-/* SECTIONS */
+/* CONTENIDO */
 .section{
 display:none;
-padding-top:120px;
+padding-top:130px;
 padding-bottom:140px;
 text-align:center;
+background:#ffd800;
+min-height:100vh;
 }
 
 .active{
 display:block;
+}
+
+/* BOTONES BLANCOS */
+.menu-btn{
+background:white;
+border:none;
+padding:14px 25px;
+margin:10px;
+border-radius:12px;
+font-size:16px;
+font-weight:bold;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
 
 /* VIDEO */
@@ -71,7 +83,7 @@ border-radius:12px;
 margin-top:10px;
 }
 
-/* CHANNEL BUTTONS */
+/* BOTONES CANALES */
 .channel-btn{
 background:#6a00ff;
 color:white;
@@ -82,19 +94,18 @@ border-radius:10px;
 font-size:16px;
 }
 
-/* NAVBAR APP STYLE */
+/* NAVBAR */
 .navbar{
 position:fixed;
 bottom:0;
 width:100%;
-height:calc(90px + env(safe-area-inset-bottom));
+height:calc(85px + env(safe-area-inset-bottom));
 background:#6a00ff;
 display:flex;
 justify-content:space-around;
 align-items:flex-start;
 padding-top:8px;
 padding-bottom:env(safe-area-inset-bottom);
-box-shadow:0 -4px 20px rgba(0,0,0,0.4);
 }
 
 .nav-item{
@@ -103,8 +114,11 @@ flex-direction:column;
 align-items:center;
 color:white;
 font-size:12px;
-opacity:0.6;
-transition:0.3s;
+opacity:0.7;
+}
+
+.nav-item.active{
+opacity:1;
 }
 
 .nav-item svg{
@@ -112,52 +126,22 @@ width:24px;
 height:24px;
 margin-bottom:4px;
 }
-
-.nav-item.active{
-opacity:1;
-transform:scale(1.05);
-}
-
-.nav-item:active{
-transform:scale(0.9);
-}
-
-/* SPLASH */
-#splash{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#ffd800;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:999;
-}
-
-#splash img{
-width:200px;
-}
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
-<div id="splash">
-<img src="logo.png">
-</div>
-
-<!-- HEADER -->
 <div class="header">
-<img src="logo.png">
+RetroToons TV
 </div>
 
 <!-- INICIO -->
 <div id="inicio" class="section active">
-<h2>Bienvenido a RetroToons</h2>
-<p>Clásicos animados 24/7</p>
+<h2>Inicio</h2>
+
+<button class="menu-btn" onclick="goVivo()">
+Ir a En Vivo
+</button>
 </div>
 
 <!-- EN VIVO -->
@@ -198,19 +182,6 @@ En Vivo
 </div>
 
 <script>
-/* SPLASH */
-setTimeout(()=>{
-document.getElementById("splash").style.display="none";
-},2000);
-
-/* VIBRATION */
-function vibrar(){
-if(navigator.vibrate){
-navigator.vibrate(30);
-}
-}
-
-/* SECTIONS */
 function showSection(id){
 document.querySelectorAll('.section').forEach(sec=>{
 sec.classList.remove('active');
@@ -218,23 +189,20 @@ sec.classList.remove('active');
 document.getElementById(id).classList.add('active');
 }
 
-/* NAVIGATION */
 function goInicio(){
-vibrar();
 showSection('inicio');
 document.getElementById('btnInicio').classList.add('active');
 document.getElementById('btnVivo').classList.remove('active');
 }
 
 function goVivo(){
-vibrar();
 showSection('envivo');
 document.getElementById('btnInicio').classList.remove('active');
 document.getElementById('btnVivo').classList.add('active');
 playStream(1);
 }
 
-/* STREAM */
+/* STREAM M3U8 */
 function playStream(option){
 let url="";
 
@@ -257,31 +225,22 @@ video.src=url;
 
 /* SERVICE WORKER */
 if ('serviceWorker' in navigator) {
-
 const swCode = `
 const CACHE_NAME = 'retrotoons-v1';
-
-self.addEventListener('install', event => {
-event.waitUntil(
-caches.open(CACHE_NAME).then(cache => {
-return cache.addAll(['./']);
-})
+self.addEventListener('install', e => {
+e.waitUntil(
+caches.open(CACHE_NAME).then(cache => cache.addAll(['./']))
 );
 });
-
-self.addEventListener('fetch', event => {
-event.respondWith(
-caches.match(event.request).then(response => {
-return response || fetch(event.request);
-})
+self.addEventListener('fetch', e => {
+e.respondWith(
+caches.match(e.request).then(r => r || fetch(e.request))
 );
 });
 `;
-
 const blob = new Blob([swCode], { type: 'text/javascript' });
 const swURL = URL.createObjectURL(blob);
 navigator.serviceWorker.register(swURL);
-
 }
 </script>
 
