@@ -9,10 +9,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#6a00ff">
-<link rel="apple-touch-icon" href="icon.png">
-
-<!-- Iconos PWA -->
-<link rel="icon" href="splash.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-512.png">
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
@@ -50,7 +48,6 @@ justify-content:center;
 align-items:center;
 z-index:999;
 }
-
 #splash img{
 width:200px;
 }
@@ -60,29 +57,47 @@ width:200px;
 position:fixed;
 top:0;
 width:100%;
-height:calc(90px + env(safe-area-inset-top));
+height:calc(95px + env(safe-area-inset-top));
 background:#6a00ff;
 display:flex;
 justify-content:center;
 align-items:flex-end;
 padding-bottom:10px;
 z-index:10;
+box-shadow:0 6px 12px rgba(0,0,0,0.3);
 }
-
 .header img{
 height:50px;
+}
+
+/* Sombras transición */
+.top-shadow{
+position:fixed;
+top:calc(95px + env(safe-area-inset-top));
+width:100%;
+height:20px;
+background:linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0));
+z-index:9;
+}
+
+.bottom-shadow{
+position:fixed;
+bottom:calc(95px + env(safe-area-inset-bottom));
+width:100%;
+height:20px;
+background:linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.25));
+z-index:9;
 }
 
 /* CONTENIDO */
 .section{
 display:none;
-padding-top:140px;
-padding-bottom:150px;
+padding-top:150px;
+padding-bottom:160px;
 text-align:center;
 background:#ffd800;
 min-height:100vh;
 }
-
 .active{
 display:block;
 }
@@ -122,13 +137,14 @@ font-size:16px;
 position:fixed;
 bottom:0;
 width:100%;
-height:calc(90px + env(safe-area-inset-bottom));
+height:calc(95px + env(safe-area-inset-bottom));
 background:#6a00ff;
 display:flex;
 justify-content:space-around;
 align-items:flex-start;
 padding-top:8px;
 padding-bottom:env(safe-area-inset-bottom);
+box-shadow:0 -6px 12px rgba(0,0,0,0.3);
 }
 
 .nav-item{
@@ -139,11 +155,9 @@ color:white;
 font-size:12px;
 opacity:0.7;
 }
-
 .nav-item.active{
 opacity:1;
 }
-
 .nav-item svg{
 width:24px;
 height:24px;
@@ -156,18 +170,19 @@ margin-bottom:4px;
 
 <!-- SPLASH -->
 <div id="splash">
-<img src="splash.png">
+<img src="logo.png">
 </div>
 
 <!-- HEADER -->
 <div class="header">
-<img src="splash.png">
+<img src="logo.png">
 </div>
+
+<div class="top-shadow"></div>
 
 <!-- INICIO -->
 <div id="inicio" class="section active">
 <h2>Inicio</h2>
-
 <button class="menu-btn" onclick="goVivo()">
 Ir a En Vivo
 </button>
@@ -188,8 +203,9 @@ Opción 1
 <button class="channel-btn" onclick="playStream(2)">
 Opción 2
 </button>
-
 </div>
+
+<div class="bottom-shadow"></div>
 
 <!-- NAVBAR -->
 <div class="navbar">
@@ -211,7 +227,7 @@ En Vivo
 </div>
 
 <script>
-/* SPLASH */
+/* Splash */
 setTimeout(()=>{
 document.getElementById("splash").style.display="none";
 },2000);
@@ -236,7 +252,7 @@ document.getElementById('btnVivo').classList.add('active');
 playStream(1);
 }
 
-/* STREAM */
+/* STREAM M3U8 */
 function playStream(option){
 let url="";
 
@@ -257,7 +273,7 @@ video.src=url;
 }
 }
 
-/* SERVICE WORKER */
+/* Service Worker */
 if ('serviceWorker' in navigator) {
 const swCode = `
 const CACHE_NAME = 'retrotoons-v1';
