@@ -9,6 +9,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#6a00ff">
+<link rel="apple-touch-icon" href="icon.png">
+
+<!-- Iconos PWA -->
+<link rel="icon" href="icon-512.png">
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
@@ -33,28 +37,47 @@ background:#6a00ff;
 z-index:-1;
 }
 
+/* SPLASH */
+#splash{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#ffd800;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+#splash img{
+width:200px;
+}
+
 /* HEADER */
 .header{
 position:fixed;
 top:0;
 width:100%;
-height:calc(80px + env(safe-area-inset-top));
+height:calc(90px + env(safe-area-inset-top));
 background:#6a00ff;
 display:flex;
 justify-content:center;
 align-items:flex-end;
 padding-bottom:10px;
-color:white;
-font-size:20px;
-font-weight:bold;
 z-index:10;
+}
+
+.header img{
+height:50px;
 }
 
 /* CONTENIDO */
 .section{
 display:none;
-padding-top:130px;
-padding-bottom:140px;
+padding-top:140px;
+padding-bottom:150px;
 text-align:center;
 background:#ffd800;
 min-height:100vh;
@@ -99,7 +122,7 @@ font-size:16px;
 position:fixed;
 bottom:0;
 width:100%;
-height:calc(85px + env(safe-area-inset-bottom));
+height:calc(90px + env(safe-area-inset-bottom));
 background:#6a00ff;
 display:flex;
 justify-content:space-around;
@@ -131,8 +154,14 @@ margin-bottom:4px;
 
 <body>
 
+<!-- SPLASH -->
+<div id="splash">
+<img src="logo.png">
+</div>
+
+<!-- HEADER -->
 <div class="header">
-RetroToons TV
+<img src="logo.png">
 </div>
 
 <!-- INICIO -->
@@ -182,6 +211,11 @@ En Vivo
 </div>
 
 <script>
+/* SPLASH */
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+},2000);
+
 function showSection(id){
 document.querySelectorAll('.section').forEach(sec=>{
 sec.classList.remove('active');
@@ -202,7 +236,7 @@ document.getElementById('btnVivo').classList.add('active');
 playStream(1);
 }
 
-/* STREAM M3U8 */
+/* STREAM */
 function playStream(option){
 let url="";
 
@@ -228,14 +262,10 @@ if ('serviceWorker' in navigator) {
 const swCode = `
 const CACHE_NAME = 'retrotoons-v1';
 self.addEventListener('install', e => {
-e.waitUntil(
-caches.open(CACHE_NAME).then(cache => cache.addAll(['./']))
-);
+e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(['./'])));
 });
 self.addEventListener('fetch', e => {
-e.respondWith(
-caches.match(e.request).then(r => r || fetch(e.request))
-);
+e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
 `;
 const blob = new Blob([swCode], { type: 'text/javascript' });
