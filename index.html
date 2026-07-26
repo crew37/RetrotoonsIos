@@ -2,8 +2,38 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>RetroToons TV</title>
+
+  <!-- ============================================================ -->
+  <!-- CONFIGURACIÓN PWA COMPLETA (TODO INTEGRADO)                  -->
+  <!-- ============================================================ -->
+  <meta name="theme-color" content="#210947">
+
+  <!-- Configuración Específica para iOS (iPhone / iPad) -->
+  <link rel="apple-touch-icon" href="/icon.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/icon-152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icon.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="/icon-167.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RetroToons">
+
+  <!-- Manifest PWA Inyectado en línea (Sin necesidad de manifest.json externo) -->
+  <link rel="manifest" href='data:application/json,{
+    "name": "RetroToons TV",
+    "short_name": "RetroToons",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#210947",
+    "theme_color": "#210947",
+    "icons": [
+      { "src": "/icon-180.png", "sizes": "180x180", "type": "image/png" },
+      { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+      { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    ]
+  }'>
+  <!-- ============================================================ -->
 
   <style>
     :root{
@@ -350,9 +380,7 @@
             <div class="loading">Cargando canal…</div>
           </div>
 
-          <button id="full" class="fullscreen" type="button" aria-label="Pantalla completa">
-            
-          </button>
+          <button id="full" class="fullscreen" type="button" aria-label="Pantalla completa"></button>
         </div>
 
         <div class="now">
@@ -378,6 +406,23 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js"></script>
 
   <script>
+    // Registra un Service Worker PWA integrado sin necesidad de archivo sw.js separado
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        const swCode = `
+          self.addEventListener('install', e => self.skipWaiting());
+          self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+          self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
+        `;
+        const blob = new Blob([swCode], { type: 'text/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        
+        navigator.serviceWorker.register(swUrl)
+          .then(() => console.log('PWA Service Worker listo'))
+          .catch(err => console.log('Error SW:', err));
+      });
+    }
+
     const channels = [
       {
         id: "retrotoons-op-1",
@@ -391,7 +436,7 @@
         short: "RT2",
         stream: "https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8"
       },
-       {
+      {
         id: "delmi-tv",
         name: "Delmi TV",
         short: "DTV",
@@ -427,7 +472,6 @@
         short: "CC",
         embed: "https://ok.ru/videoembed/10378284506878?nochat=1"
       },
-      
       {
         id: "magic-kids",
         name: "Magic Kids",
@@ -544,7 +588,6 @@
       }
     ];
 
-    // Encontrar el índice del canal de Kick ("retrotoons-kick") para que inicie por defecto
     const kickIndex = channels.findIndex(ch => ch.id === "retrotoons-kick");
     let current = kickIndex !== -1 ? kickIndex : 0;
     let cursor = current;
