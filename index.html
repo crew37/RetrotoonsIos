@@ -2,16 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>RetroToons TV</title>
 
- <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#6a00ff">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-512.png">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="icon" href="splash.png">
+  <!-- PWA -->
+  <meta name="theme-color" content="#321064">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="RetroToons">
 
   <style>
     :root{
@@ -19,16 +20,20 @@
       --amarillo:#ffd52d;
       --texto:#f9f6ff;
       --suave:#bbadd4;
+      --foco:#ffdc3d;
     }
 
     *{box-sizing:border-box}
 
     html,body{
       margin:0;
-      min-height:100%;
+      height:100vh;
+      height:100dvh;
+      overflow:hidden;
       background:#210947;
       color:var(--texto);
       font-family:Arial,Helvetica,sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
 
     body{
@@ -38,25 +43,33 @@
     }
 
     .app{
-      min-height:100vh;
-      padding:22px 3.6vw;
+      height:100vh;
+      height:100dvh;
+      display:flex;
+      flex-direction:column;
+      padding:2vh 2.5vw;
+      padding-top:max(2vh, env(safe-area-inset-top, 0px));
+      padding-bottom:max(2vh, env(safe-area-inset-bottom, 0px));
+      padding-left:max(2.5vw, env(safe-area-inset-left, 0px));
+      padding-right:max(2.5vw, env(safe-area-inset-right, 0px));
     }
 
     .top{
-      height:58px;
+      height:8vh;
+      min-height:50px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      margin-bottom:18px;
+      margin-bottom:1.5vh;
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:11px;
-      font-size:24px;
+      gap:14px;
+      font-size:26px;
       font-weight:900;
-      letter-spacing:.5px;
+      letter-spacing:.8px;
     }
 
     .brand b{color:var(--amarillo)}
@@ -66,10 +79,10 @@
       place-items:center;
       background:var(--amarillo);
       color:var(--violeta);
-      height:52px;
-      width:52px;
-      border-radius:13px;
-      font-size:35px;
+      height:50px;
+      width:50px;
+      border-radius:12px;
+      font-size:32px;
       font-style:italic;
     }
 
@@ -77,124 +90,165 @@
 
     .clock strong{
       display:block;
-      font-size:27px;
+      font-size:28px;
       line-height:1;
     }
 
     .clock small{
       color:var(--suave);
-      font-size:11px;
+      font-size:12px;
       text-transform:capitalize;
     }
 
     .layout{
       display:grid;
-      grid-template-columns:minmax(260px,22%) 1fr;
-      gap:28px;
+      grid-template-columns:260px 1fr;
+      gap:24px;
+      flex:1;
+      min-height:0;
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
 
     .head{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      margin-bottom:14px;
+      margin-bottom:10px;
     }
 
     .head h1{
       margin:0;
-      font-size:15px;
-      letter-spacing:1.8px;
+      font-size:14px;
+      letter-spacing:1.5px;
     }
 
     .head span{
       color:var(--amarillo);
-      font-size:10px;
+      font-size:11px;
       font-weight:bold;
     }
 
     .channels{
-      max-height:calc(100vh - 155px);
-      overflow:auto;
+      flex: 1;
+      min-height: 0;
+      overflow-y:auto;
       padding-right:4px;
+      scroll-behavior: smooth;
+    }
+
+    .channels::-webkit-scrollbar {
+      width: 5px;
+    }
+    .channels::-webkit-scrollbar-thumb {
+      background: #7d52b3;
+      border-radius: 3px;
     }
 
     .channel{
       display:grid;
-      grid-template-columns:27px 40px 1fr 18px;
+      grid-template-columns:28px 38px 1fr 18px;
       align-items:center;
-      gap:9px;
+      gap:10px;
       width:100%;
       margin:4px 0;
       padding:9px 10px;
-      border:1px solid transparent;
+      border:2px solid transparent;
       border-radius:10px;
       background:transparent;
       color:#fff;
       cursor:pointer;
       text-align:left;
+      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
     }
 
     .channel:hover,
     .channel:focus,
     .channel.focused{
-      background:#4d208d;
-      outline:2px solid var(--amarillo);
-      outline-offset:-2px;
+      background:#532397;
+      border-color: var(--foco);
+      outline: none;
+      transform: scale(1.02);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
     }
 
     .channel.active{
       background:linear-gradient(90deg,#ffdc3d,#f6b90d);
-      box-shadow:0 5px 13px #12032c77;
+      box-shadow:0 4px 12px rgba(18, 3, 44, 0.5);
       color:#26084e;
       font-weight:bold;
     }
 
-    .channel.active.focused{outline-color:#fff}
+    .channel.active.focused{
+      border-color:#fff;
+    }
 
     .num{
-      font-size:10px;
+      font-size:11px;
       font-weight:bold;
-      opacity:.72;
+      opacity:.75;
     }
 
     .logo{
       display:grid;
       place-items:center;
-      height:32px;
-      border-radius:7px;
+      height:30px;
+      border-radius:6px;
       background:#7d52b3;
       color:#fff;
-      font-size:10px;
+      font-size:11px;
       font-weight:900;
     }
 
-    .active .logo{background:#4b1687}
+    .active .logo{background:#4b1687; color: #fff;}
 
     .name{
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
-      font-size:15px;
+      font-size:14px;
     }
 
-    .play{visibility:hidden}
+    .play{visibility:hidden; font-size: 12px;}
     .active .play{visibility:visible}
 
     .hint{
-      color:#a99abe;
-      font-size:10px;
-      line-height:1.6;
-      margin:16px 4px;
+      color:#c2b4d8;
+      font-size:11px;
+      line-height:1.4;
+      margin:10px 0 0 0;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      justify-content: space-between;
     }
 
     .playerwrap{
       position:relative;
-      aspect-ratio:16/9;
+      flex: 1;
+      min-height: 0;
+      aspect-ratio: 16/9;
+      max-height: 60vh;
       overflow:hidden;
       background:#10051e;
       border:2px solid #8051b6;
-      border-radius:16px;
-      box-shadow:0 19px 40px #16032c73;
+      border-radius:14px;
+      box-shadow:0 16px 35px rgba(22, 3, 44, 0.8);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .playerwrap:focus,
+    .playerwrap.focused {
+      border-color: var(--foco);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 213, 45, 0.3), 0 16px 35px rgba(22, 3, 44, 0.8);
     }
 
     .player,
@@ -211,21 +265,33 @@
       align-items:center;
       justify-content:center;
       height:100%;
+      padding:0 16px;
+      text-align:center;
       color:var(--suave);
+      font-size:16px;
     }
 
     .fullscreen{
       position:absolute;
       right:14px;
       bottom:14px;
-      width:47px;
-      height:42px;
-      border:0px solid #8c68b8;
-      border-radius:1px;
-      background:transparent;
+      width:46px;
+      height:40px;
+      border:0;
+      background:rgba(0, 0, 0, 0.6);
+      border-radius:6px;
       color:#fff;
-      font-size:23px;
+      font-size:22px;
       cursor:pointer;
+      display:grid;
+      place-items:center;
+      transition: background 0.15s ease;
+    }
+
+    .fullscreen:focus, .fullscreen:hover {
+      background: var(--foco);
+      color: var(--violeta);
+      outline: none;
     }
 
     .playerwrap:fullscreen{
@@ -233,17 +299,18 @@
       height:100vh;
       border:0;
       border-radius:0;
+      max-height: none;
     }
 
     .now{
       display:flex;
       align-items:center;
       gap:14px;
-      margin:18px 5px;
+      margin:1.2vh 0;
     }
 
     .live{
-      padding:7px 11px;
+      padding:6px 12px;
       border-radius:20px;
       background:#e93860;
       font-size:11px;
@@ -260,7 +327,7 @@
     }
 
     .eyebrow{
-      margin:0 0 3px;
+      margin:0 0 2px;
       color:var(--amarillo);
       font-size:10px;
       font-weight:bold;
@@ -269,51 +336,48 @@
 
     .now h2{
       margin:0;
-      font-size:25px;
+      font-size:22px;
     }
 
     .fav{
       margin-left:auto;
-      border:0;
-      background:transparent;
+      border:2px solid transparent;
+      background:rgba(255, 255, 255, 0.05);
+      border-radius:10px;
+      width:44px;
+      height:44px;
+      display:grid;
+      place-items:center;
       color:var(--amarillo);
-      font-size:35px;
+      font-size:24px;
       cursor:pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .fav:focus, .fav:hover {
+      background:#532397;
+      border-color: var(--foco);
+      outline: none;
     }
 
     .tip{
-      padding:12px 14px;
+      padding:10px 14px;
       border-left:3px solid var(--amarillo);
-      border-radius:5px;
+      border-radius:6px;
       background:#29104f;
       color:#d3c8e1;
-      font-size:13px;
+      font-size:12px;
     }
 
     @media(max-width:760px){
-      .app{padding:16px}
-      .top{height:48px}
-      .brand{font-size:18px}
-      .mark{width:42px;height:42px;font-size:25px}
-      .clock strong{font-size:20px}
-      .layout{display:block}
-      .side{margin-bottom:20px}
-
-      .channels{
-        display:flex;
-        gap:7px;
-        max-height:none;
-        overflow:auto;
-      }
-
-      .channel{
-        flex:0 0 170px;
-        grid-template-columns:26px 38px 1fr;
-      }
-
-      .play,.hint{display:none}
-      .now h2{font-size:20px}
-      .tip{font-size:11px}
+      html,body{height:auto; overflow:auto;}
+      .app{height:auto; padding:16px;}
+      .layout{display:block;}
+      .side{margin-bottom:20px;}
+      .channels{display:flex; gap:7px; max-height:none; overflow:auto;}
+      .channel{flex:0 0 170px; grid-template-columns:26px 38px 1fr;}
+      .play,.hint{display:none;}
+      .playerwrap{max-height: none;}
     }
   </style>
 </head>
@@ -339,26 +403,28 @@
           <span id="count"></span>
         </div>
 
-        <nav id="list" class="channels"></nav>
+        <nav id="list" class="channels" aria-label="Lista de Canales"></nav>
 
         <p class="hint">
           ↑ ↓ Elegir canal · OK reproducir · → reproductor · OK pantalla completa
         </p>
       </aside>
 
-      <section>
+      <section class="main-content">
         <div
           id="playerWrap"
           class="playerwrap"
           tabindex="0"
           role="button"
-          aria-label="Reproductor. Presioná OK para pantalla completa."
+          aria-label="Reproductor de video. Presiona OK para pantalla completa."
         >
           <div id="player" class="player">
             <div class="loading">Cargando canal…</div>
           </div>
 
-          <button id="full" class="fullscreen" type="button" aria-label="Pantalla completa"></button>
+          <button id="full" class="fullscreen" type="button" aria-label="Pantalla completa">
+            ⛶
+          </button>
         </div>
 
         <div class="now">
@@ -369,12 +435,12 @@
             <h2 id="title">Cargando…</h2>
           </div>
 
-          <button id="fav" class="fav" type="button" aria-label="Favorito">☆</button>
+          <button id="fav" class="fav" type="button" aria-label="Agregar a favoritos"></button>
         </div>
 
         <div class="tip">
           <b>Apoya el Proyecto:</b>
-          Si quieres ayudar con este proyecto, dona un cafecito. 
+          Si quieres ayudar con este proyecto, dona un cafecito.
           <span style="color: #C4A900;"><b>Cafecito.app/retrotoons2026</b></span>
         </div>
       </section>
@@ -384,192 +450,79 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js"></script>
 
   <script>
-    // Registra un Service Worker PWA integrado sin necesidad de archivo sw.js separado
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        const swCode = `
-          self.addEventListener('install', e => self.skipWaiting());
-          self.addEventListener('activate', e => e.waitUntil(clients.claim()));
-          self.addEventListener('fetch', e => e.respondWith(fetch(e.request)));
-        `;
-        const blob = new Blob([swCode], { type: 'text/javascript' });
-        const swUrl = URL.createObjectURL(blob);
-        
-        navigator.serviceWorker.register(swUrl)
-          .then(() => console.log('PWA Service Worker listo'))
-          .catch(err => console.log('Error SW:', err));
-      });
-    }
-
     const channels = [
-      {
-        id: "retrotoons-op-1",
-        name: "RetroToons Op 1",
-        short: "RT1",
-        stream: "https://live20.bozztv.com/akamaissh101/ssh101/retrotoons/chunks.m3u8"
-      },
-      {
-        id: "retrotoons-op-2",
-        name: "RetroToons Op 2",
-        short: "RT2",
-        stream: "https://live20.bozztv.com/giatv/giatv-Retrotoonstv/Retrotoonstv/chunks.m3u8"
-      },
-      {
-        id: "delmi-tv",
-        name: "Delmi TV",
-        short: "DTV",
-        stream: "https://live20.bozztv.com/giatvplayout7/giatv-210634/playlist.m3u8"
-      },
-      {
-        id: "best-clasicos-tv",
-        name: "Best Clasicos TV",
-        short: "BCTV",
-        stream: "https://acceso.mediosdecostarica.com:3873/hybrid/play.m3u8"
-      },
-      {
-        id: "cartoon-network",
-        name: "Cartoon Network",
-        short: "CN",
-        embed: "https://ok.ru/videoembed/8896438738686?nochat=1"
-      },
-      {
-        id: "fox-kids",
-        name: "Fox Kids",
-        short: "FK",
-        embed: "https://ok.ru/videoembed/8967999463166?nochat=1"
-      },
-      {
-        id: "nick-at-nite",
-        name: "Nick At Nite",
-        short: "N@N",
-        embed: "https://ok.ru/videoembed/9194603093758?nochat=1"
-      },
-      {
-        id: "cartoon-cartoon",
-        name: "Cartoon Cartoon",
-        short: "CC",
-        embed: "https://ok.ru/videoembed/10378284506878?nochat=1"
-      },
-      {
-        id: "magic-kids",
-        name: "Magic Kids",
-        short: "MK",
-        stream: "https://kiiroilabs.ddns.net/magickids/stream/stream.m3u8"
-      },
-      {
-        id: "energeek-retro",
-        name: "EnerGeek Retro",
-        short: "EGR",
-        stream: "https://backend.energeek.cl/webtv/egretroweb/tracks-v1a1/mono.m3u8?token=S3r3noTV"
-      },
-      {
-        id: "magic-kids-argentina",
-        name: "Magic Kids TV Argentina",
-        short: "MKA",
-        stream: "https://183.bozztv.com/giatv/giatv-magicplus/magicplus/chunks.m3u8"
-      },
-      {
-        id: "magic-kids-ok",
-        name: "Magic Kids OK",
-        short: "MKO",
-        stream: "https://kali.vdopanel.com:3909/stream/play.m3u8"
-      },
-      {
-        id: "retromagico",
-        name: "RetroMagico",
-        short: "RM",
-        stream: "https://lbgo.bozztv.com/ssh101/ssh101/retromagicocnl/chunks.m3u8?lb_backend_hint=6"
-      },
-      {
-        id: "dreiko-tv",
-        name: "Dreiko TV",
-        short: "DT",
-        stream: "https://rtv.fullhd-streaming.com:19360/dreikotv/dreikotv.m3u8"
-      },
-      {
-        id: "anime-stationv",
-        name: "Anime StationV",
-        short: "AS",
-        stream: "https://live20.bozztv.com/akamaissh101/ssh101/livestreamingtv/chunks.m3u8"
-      },
-      {
-        id: "retro-tv-hd",
-        name: "Retro TV HD",
-        short: "RHD",
-        stream: "https://live20.bozztv.com/akamaissh101/ssh101/retrotvcr2025/playlist.m3u8"
-      },
-      {
-        id: "tv-retro-palmares",
-        name: "TV Retro Palmares",
-        short: "TRP",
-        stream: "https://live20.bozztv.com/akamaissh101/ssh101/tvretropalmares/chunks.m3u8"
-      },
-      {
-        id: "tv-los-pitufos",
-        name: "TV Los Pitufos",
-        short: "PIT",
-        stream: "https://imps-smrfs.otteravision.com/imps/smrfs/smrfs.m3u8"
-      },
-      {
-        id: "laika-espana",
-        name: "Laika Channel España",
-        short: "LAI",
-        stream: "https://live20.bozztv.com/giatvplayout7/giatv-209474/tracks-v1a1/mono.ts.m3u8"
-      },
-      {
-        id: "pantalla-clasica",
-        name: "Pantalla Clásica EC",
-        short: "PCE",
-        stream: "https://lbgo.bozztv.com/ssh101/ssh101/pantallaclasics/chunks.m3u8?lb_backend_hint=7"
-      },
-      {
-        id: "sumaq-tv",
-        name: "Sumaq TV",
-        short: "SUM",
-        stream: "https://lbgo.bozztv.com/ssh101/ssh101/makins/chunks.m3u8?lb_backend_hint=7"
-      },
-      {
-        id: "canal-retrox",
-        name: "Canal Retrox TV",
-        short: "RTX",
-        stream: "https://lbgo.bozztv.com/ssh101/ssh101/erinaca/chunks.m3u8"
-      },
-      {
-        id: "mi-television-clasica",
-        name: "Mi Televisión Clásica",
-        short: "MTC",
-        stream: "https://mitv.getstreamhosting.com:1936/live/live/chunklist_w1917734841.m3u8"
-      },
-      {
-        id: "tele-clasica",
-        name: "Tele Clásica",
-        short: "TCL",
-        stream: "https://stmv7.voxtvhd.com.br/teleclasica/teleclasica/playlist.m3u8"
-      },
-      {
-        id: "cn-city",
-        name: "CN City",
-        short: "CNC",
-        stream: "https://envivo.cncity.live/hls/envivo.m3u8"
-      },
-      {
-        id: "retro-plus",
-        name: "Retro Plus",
-        short: "RP",
-        stream: "https://scl.edge.grupoz.cl/retroplustvuno/live/chunklist_w1463797368.m3u8"
-      },
-      {
-        id: "zyoontv",
-        name: "Zyoon TV",
-        short: "ZTV",
-        stream: "https://live20.bozztv.com/giatv/giatv-ZYOONTV/ZYOONTV/chunks.m3u8"
-      }
+      { id: "retrotoons", name: "RetroToons", short: "RT2",
+        stream: "https://183.giatvcdn.com/ssh101/ssh101/retrotoons/chunks.m3u8" },
+      { id: "jetix", name: "Jetix", short: "JTX",
+        stream: "https://183.giatvcdn.com/giatv/giatv-MYJETIXRETRO/MYJETIXRETRO/chunks.m3u8" },
+      { id: "Canal-lms", name: "Canal LMS | Mexico", short: "LMS",
+        stream: "https://183.giatvcdn.com/ssh101/ssh101/canallms/chunks.m3u8" },
+      { id: "Janimotion", name: "Janimotion", short: "JMT",
+        stream: "https://janimotion.com/hls/janimotion/index.m3u8" },
+      { id: "Extrema", name: "XtremaTV", short: "XTV",
+        stream: "https://stmv3.voxtvhd.com.br/xtremaretrocartoons/xtremaretrocartoons/playlist.m3u8" },
+      { id: "best-clasicos-tv", name: "Best Clasicos TV", short: "BCTV",
+        stream: "https://acceso.mediosdecostarica.com:3873/hybrid/play.m3u8" },
+      { id: "cartoon-network", name: "Cartoon Network", short: "CN",
+        embed: "https://ok.ru/videoembed/8896438738686?nochat=1" },
+      { id: "fox-kids", name: "Fox Kids", short: "FK",
+        embed: "https://ok.ru/videoembed/8967999463166?nochat=1" },
+      { id: "nick-at-nite", name: "Nick At Nite", short: "N@N",
+        embed: "https://ok.ru/videoembed/9194603093758?nochat=1" },
+      { id: "cartoon-cartoon", name: "Cartoon Cartoon", short: "CC",
+        embed: "https://ok.ru/videoembed/10378284506878?nochat=1" },
+      { id: "energeek-retro", name: "EnerGeek Retro", short: "EGR",
+        stream: "https://cl-2.backend.energeek.cl/bkp/egretroweb/tracks-v1a1/mono.ts.m3u8?token=W3bEnerG33k2026" },
+      { id: "magic-kids-argentina", name: "Magic Kids TV Argentina", short: "MKA",
+        stream: "https://183.giatvcdn.com/giatv/giatv-magicplus/magicplus/chunks.m3u8" },
+      { id: "magic-kids-ok", name: "Magic Kids OK", short: "MKO",
+        stream: "https://kali.vdopanel.com:3957/stream/play.m3u8" },
+      { id: "retromagico", name: "RetroMagico", short: "RM",
+        stream: "https://183.giatvcdn.com/ssh101/ssh101/retromagicocnl/chunks.m3u8" },
+      { id: "dreiko-tv", name: "Dreiko TV", short: "DT",
+        stream: "https://cloudvideo.servers10.com:8081/8020/index.m3u8" },
+      { id: "anime-stationv", name: "Anime StationV", short: "AS",
+        stream: "https://live20.bozztv.com/akamaissh101/ssh101/livestreamingtv/chunks.m3u8" },
+      { id: "retro-tv-hd", name: "Retro TV HD", short: "RHD",
+        stream: "https://183.giatvcdn.com/ssh101/ssh101/retrotvcr2025/chunks.m3u8" },
+      { id: "tv-retro-palmares", name: "TV Retro Palmares", short: "TRP",
+        stream: "https://183.giatvcdn.com/ssh101/ssh101/tvretropalmares/chunks.m3u8" },
+      { id: "tv-los-pitufos", name: "TV Los Pitufos", short: "PIT",
+        stream: "https://imps-smrfs.otteravision.com/imps/smrfs/smrfs.m3u8" },
+      { id: "delmi-channel", name: "Delmi Channel", short: "DEL",
+        stream: "https://live20.bozztv.com/giatvplayout7/giatv-209474/tracks-v1a1/mono.ts.m3u8" },
+      { id: "pantalla-clasica", name: "Pantalla Clásica EC", short: "PCE",
+        stream: "https://183.giatvcdn.com/ssh101/ssh101/pantallaclasics/chunks.m3u8" },
+      { id: "sumaq-tv", name: "Sumaq TV", short: "SUM",
+        stream: "https://183.giatvcdn.com/ssh101/ssh101/makins/chunks.m3u8" },
+      { id: "canal-retrox", name: "Canal Retrox TV", short: "RTX",
+        stream: "https://stream-retroxtv.site/live/ofertasplustv.m3u8" },
+      { id: "canal-retrox-plus", name: "Canal Retrox Plus", short: "RTX+",
+        stream: "https://stream-retroxtv.site/w/YsgWSG6WtjajVhCmgkC9kkda.m3u8" },
+      { id: "mi-television-clasica", name: "Mi Televisión Clásica", short: "MTC",
+        stream: "https://mitv.getstreamhosting.com:1936/live/live/chunklist_w1917734841.m3u8" },
+      { id: "tele-clasica", name: "Tele Clásica", short: "TCL",
+        stream: "https://vtm1.msinteractiva.com/teleclasica/teleclasica/playlist.m3u8" },
+      { id: "cn-city", name: "CN City", short: "CNC",
+        stream: "https://envivo.cncity.live/hls/envivo.m3u8" },
+      { id: "retro-plus", name: "Retro Plus", short: "RP",
+        stream: "https://video06.logicahost.com.br/aretroplustv01/aretroplustv01/main_stream.m3u8" },
+      { id: "zyoontv", name: "Zyoon TV", short: "ZTV",
+        stream: "https://live20.bozztv.com/giatv/giatv-ZYOONTV/ZYOONTV/chunks.m3u8" },
+      { id: "Cuento-Cripta", name: "Cuentos de la Cripta 24/7", short: "CDC",
+        stream: "https://183.giatvcdn.com/giatvplayout7/giatv-210858/tracks-v1a1/mono.ts.m3u8" },
+      { id: "Tele-Mas", name: "Tele Mas", short: "TMS",
+        stream: "https://acceso.mediosdecostarica.com:3192/hybrid/play.m3u8" }
     ];
 
-    const kickIndex = channels.findIndex(ch => ch.id === "retrotoons-kick");
-    let current = kickIndex !== -1 ? kickIndex : 0;
+    // Último canal visto (o el primero)
+    const savedId = localStorage.getItem("retrotoons-last");
+    const savedIndex = channels.findIndex(ch => ch.id === savedId);
+    let current = savedIndex !== -1 ? savedIndex : 0;
     let cursor = current;
     let hlsInstance = null;
+    let loadVideoTimeout = null;
+    let retryTimeout = null;
 
     const favorites = new Set(
       JSON.parse(localStorage.getItem("retrotoons-favorites") || "[]")
@@ -602,87 +555,126 @@
       });
     }
 
+    function showMessage(text) {
+      $("#player").innerHTML = `<div class="loading">${text}</div>`;
+    }
+
+    function destroyPlayer() {
+      clearTimeout(loadVideoTimeout);
+      clearTimeout(retryTimeout);
+      if (hlsInstance) {
+        hlsInstance.destroy();
+        hlsInstance = null;
+      }
+    }
+
     function selectChannel(index) {
       const channel = channels[index];
       if (!channel) return;
 
       current = index;
       cursor = index;
+      localStorage.setItem("retrotoons-last", channel.id);
 
-      if (hlsInstance) {
-        hlsInstance.destroy();
-        hlsInstance = null;
-      }
-
-      let media;
-
-      if (channel.stream) {
-        media = document.createElement("video");
-        media.controls = true;
-        media.autoplay = true;
-        media.muted = false;
-        media.defaultMuted = false;
-        media.playsInline = true;
-        media.setAttribute("playsinline", "");
-
-        if (window.Hls && Hls.isSupported()) {
-          hlsInstance = new Hls();
-          hlsInstance.loadSource(channel.stream);
-          hlsInstance.attachMedia(media);
-
-          hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-            media.muted = false;
-            media.play().catch(() => {
-              media.muted = true;
-              media.play().catch(() => {});
-            });
-          });
-        } else {
-          media.src = channel.stream;
-          media.muted = false;
-
-          media.oncanplay = () => {
-            media.muted = false;
-            media.play().catch(() => {
-              media.muted = true;
-              media.play().catch(() => {});
-            });
-          };
-        }
-      } else {
-        const url = new URL(channel.embed);
-        url.searchParams.set("autoplay", "1");
-        url.searchParams.set("mute", "0");
-
-        media = document.createElement("iframe");
-        media.src = url.href;
-        media.allow = "autoplay; fullscreen; picture-in-picture";
-        media.allowFullscreen = true;
-      }
-
-      media.title = channel.name;
-
-      $("#player").replaceChildren(media);
       $("#title").textContent = channel.name;
       $("#fav").textContent = favorites.has(channel.id) ? "★" : "☆";
-
       render();
+
+      destroyPlayer();
+      showMessage("Cargando canal…");
+
+      // Espera 400ms para no saturar la red al cambiar rápido de canal
+      loadVideoTimeout = setTimeout(() => {
+        let media;
+
+        if (channel.stream) {
+          media = document.createElement("video");
+          media.controls = true;
+          media.autoplay = true;
+          media.muted = false;
+          media.playsInline = true;
+
+          if (window.Hls && Hls.isSupported()) {
+            const hls = new Hls({
+              enableWorker: true,
+              lowLatencyMode: true,
+              capLevelToPlayerSize: true,
+              startLevel: -1,
+              maxBufferLength: 15,
+              maxMaxBufferLength: 30,
+              maxBufferSize: 30 * 1000 * 1000,
+              liveSyncDurationCount: 3,
+              fragLoadingTimeOut: 15000,
+            });
+            hlsInstance = hls;
+
+            hls.loadSource(channel.stream);
+            hls.attachMedia(media);
+
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+              media.play().catch(() => {
+                media.muted = true;
+                media.play().catch(() => {});
+              });
+            });
+
+            // Reconexión automática si el stream falla
+            let retries = 0;
+            hls.on(Hls.Events.ERROR, (_, data) => {
+              if (!data.fatal) return;
+
+              if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                hls.recoverMediaError();
+              } else if (retries < 3) {
+                retries++;
+                retryTimeout = setTimeout(() => hls.startLoad(), 2000 * retries);
+              } else if (hlsInstance === hls) {
+                destroyPlayer();
+                showMessage("El canal no está disponible por ahora. Probá con otro.");
+              }
+            });
+            hls.on(Hls.Events.FRAG_LOADED, () => { retries = 0; });
+          } else {
+            // Fallback nativo (Safari / iOS)
+            media.src = channel.stream;
+            media.oncanplay = () => {
+              media.play().catch(() => {
+                media.muted = true;
+                media.play().catch(() => {});
+              });
+            };
+          }
+        } else {
+          // Iframes (ok.ru)
+          const url = new URL(channel.embed);
+          url.searchParams.set("autoplay", "1");
+          url.searchParams.set("mute", "0");
+
+          media = document.createElement("iframe");
+          media.src = url.href;
+          media.allow = "autoplay; fullscreen; picture-in-picture";
+          media.allowFullscreen = true;
+        }
+
+        media.title = channel.name;
+        $("#player").replaceChildren(media);
+      }, 400);
     }
 
     function moveCursor(amount) {
       cursor = (cursor + amount + channels.length) % channels.length;
       render();
 
-      document
-        .querySelector(`[data-index="${cursor}"]`)
-        ?.focus();
+      const focusedEl = document.querySelector(`[data-index="${cursor}"]`);
+      focusedEl?.focus();
+      focusedEl?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     function toggleFullscreen() {
       if (document.fullscreenElement) {
         document.exitFullscreen();
       } else {
-        $("#playerWrap").requestFullscreen();
+        $("#playerWrap").requestFullscreen?.();
       }
     }
 
@@ -704,7 +696,8 @@
         JSON.stringify([...favorites])
       );
 
-      selectChannel(current);
+      // Solo actualiza la estrella, sin recargar el video
+      $("#fav").textContent = favorites.has(channel.id) ? "★" : "☆";
     };
 
     document.onkeydown = event => {
@@ -729,15 +722,19 @@
       ) {
         event.preventDefault();
 
-        document
-          .querySelector(`[data-index="${cursor}"]`)
-          ?.focus();
+        const focusedEl = document.querySelector(`[data-index="${cursor}"]`);
+        focusedEl?.focus();
+        focusedEl?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
 
       if (event.key === "Enter") {
         event.preventDefault();
 
         if (document.activeElement === $("#playerWrap")) {
+          toggleFullscreen();
+        } else if (document.activeElement === $("#fav")) {
+          $("#fav").click();
+        } else if (document.activeElement === $("#full")) {
           toggleFullscreen();
         } else {
           selectChannel(cursor);
@@ -774,5 +771,8 @@
     render();
     selectChannel(current);
   </script>
+
+  <!-- PWA: service worker, botón de instalar y pantalla encendida -->
+  <script src="pwa.js" defer></script>
 </body>
 </html>
