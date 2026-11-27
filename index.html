@@ -1,778 +1,335 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>RetroToons TV</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RetroToons TV</title>
+<meta name="theme-color" content="#321064">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="RetroToons">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<style>
+:root{--violeta:#321064;--amarillo:#ffd52d;--texto:#f9f6ff;--suave:#bbadd4;--foco:#ffdc3d}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100vh;height:100dvh;overflow:hidden;overscroll-behavior:none;background:#210947;color:var(--texto);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body{background:radial-gradient(circle at 82% 0,#7542b3 0,transparent 27%),linear-gradient(125deg,#1c093d,#3e1378 55%,#24074b)}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:2vh 2.5vw;padding-top:max(2vh,env(safe-area-inset-top,0px));padding-bottom:max(2vh,env(safe-area-inset-bottom,0px));padding-left:max(2.5vw,env(safe-area-inset-left,0px));padding-right:max(2.5vw,env(safe-area-inset-right,0px))}
+.top{height:8vh;min-height:50px;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5vh}
+.brand{display:flex;align-items:center;gap:14px;font-size:26px;font-weight:900;letter-spacing:.8px}
+.brand b{color:var(--amarillo)}
+.mark{display:grid;place-items:center;background:var(--amarillo);color:var(--violeta);height:50px;width:50px;border-radius:12px;font-size:32px;font-style:italic}
+.clock{text-align:right}
+.clock strong{display:block;font-size:28px;line-height:1}
+.clock small{color:var(--suave);font-size:12px;text-transform:capitalize}
+.layout{display:grid;grid-template-columns:260px 1fr;gap:24px;flex:1;min-height:0}
+.side{display:flex;flex-direction:column;min-height:0}
+.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.head h1{margin:0;font-size:14px;letter-spacing:1.5px}
+.head span{color:var(--amarillo);font-size:11px;font-weight:bold}
+.channels{flex:1;min-height:0;overflow-y:auto;padding-right:4px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.channels::-webkit-scrollbar{width:5px}
+.channels::-webkit-scrollbar-thumb{background:#7d52b3;border-radius:3px}
+.channel{display:grid;grid-template-columns:28px 38px 1fr 18px;align-items:center;gap:10px;width:100%;margin:4px 0;padding:9px 10px;border:2px solid transparent;border-radius:10px;background:transparent;color:#fff;cursor:pointer;text-align:left;font:inherit;transition:background .15s,transform .15s,border-color .15s}
+.channel:focus,.channel.focused{background:#532397;border-color:var(--foco);outline:none;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+@media(hover:hover){.channel:hover{background:#532397;border-color:var(--foco);transform:scale(1.02)}}
+.channel.active{background:linear-gradient(90deg,#ffdc3d,#f6b90d);box-shadow:0 4px 12px rgba(18,3,44,.5);color:#26084e;font-weight:bold}
+.channel.active.focused{border-color:#fff}
+.num{font-size:11px;font-weight:bold;opacity:.75}
+.logo{display:grid;place-items:center;height:30px;border-radius:6px;background:#7d52b3;color:#fff;font-size:11px;font-weight:900}
+.active .logo{background:#4b1687}
+.name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.play{visibility:hidden;font-size:12px}
+.active .play{visibility:visible}
+.hint{color:#c2b4d8;font-size:11px;line-height:1.4;margin:10px 0 0}
+.main-content{display:flex;flex-direction:column;min-height:0;justify-content:space-between}
+.playerwrap{position:relative;flex:1;min-height:0;aspect-ratio:16/9;max-height:60vh;overflow:hidden;background:#10051e;border:2px solid #8051b6;border-radius:14px;box-shadow:0 16px 35px rgba(22,3,44,.8)}
+.playerwrap:focus,.playerwrap.focused{border-color:var(--foco);outline:none}
+.player,.player iframe,.player video{width:100%;height:100%;border:0;background:#000}
+.loading{display:flex;align-items:center;justify-content:center;height:100%;padding:0 16px;text-align:center;color:var(--suave);font-size:16px}
+.fullscreen{position:absolute;right:14px;bottom:14px;width:46px;height:40px;border:0;background:rgba(0,0,0,.6);border-radius:6px;color:#fff;font-size:22px;cursor:pointer;display:grid;place-items:center}
+.fullscreen:focus{background:var(--foco);color:var(--violeta);outline:none}
+.playerwrap:fullscreen{width:100vw;height:100vh;border:0;border-radius:0;max-height:none}
+/* pantalla completa "simulada" (iPhone con iframes) */
+.playerwrap.pseudo-fs{position:fixed;inset:0;z-index:100;width:100vw;height:100vh;height:100dvh;max-height:none;aspect-ratio:auto;border:0;border-radius:0}
+.now{display:flex;align-items:center;gap:14px;margin:1.2vh 0}
+.live{padding:6px 12px;border-radius:20px;background:#e93860;font-size:11px;font-weight:bold;white-space:nowrap}
+.live i{display:inline-block;width:6px;height:6px;margin-right:5px;border-radius:50%;background:#fff}
+.eyebrow{margin:0 0 2px;color:var(--amarillo);font-size:10px;font-weight:bold;letter-spacing:1.2px}
+.now h2{margin:0;font-size:22px}
+.fav{margin-left:auto;border:2px solid transparent;background:rgba(255,255,255,.05);border-radius:10px;width:44px;height:44px;flex:none;display:grid;place-items:center;color:var(--amarillo);font-size:24px;cursor:pointer}
+.fav:focus{background:#532397;border-color:var(--foco);outline:none}
+.tip{padding:10px 14px;border-left:3px solid var(--amarillo);border-radius:6px;background:#29104f;color:#d3c8e1;font-size:12px}
 
-  <!-- PWA -->
-  <meta name="theme-color" content="#321064">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icons/icon-192.png">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="RetroToons">
-
-  <style>
-    :root{
-      --violeta:#321064;
-      --amarillo:#ffd52d;
-      --texto:#f9f6ff;
-      --suave:#bbadd4;
-      --foco:#ffdc3d;
-    }
-
-    *{box-sizing:border-box}
-
-    html,body{
-      margin:0;
-      height:100vh;
-      height:100dvh;
-      overflow:hidden;
-      background:#210947;
-      color:var(--texto);
-      font-family:Arial,Helvetica,sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body{
-      background:
-        radial-gradient(circle at 82% 0,#7542b3 0,transparent 27%),
-        linear-gradient(125deg,#1c093d,#3e1378 55%,#24074b);
-    }
-
-    .app{
-      height:100vh;
-      height:100dvh;
-      display:flex;
-      flex-direction:column;
-      padding:2vh 2.5vw;
-      padding-top:max(2vh, env(safe-area-inset-top, 0px));
-      padding-bottom:max(2vh, env(safe-area-inset-bottom, 0px));
-      padding-left:max(2.5vw, env(safe-area-inset-left, 0px));
-      padding-right:max(2.5vw, env(safe-area-inset-right, 0px));
-    }
-
-    .top{
-      height:8vh;
-      min-height:50px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:1.5vh;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      font-size:26px;
-      font-weight:900;
-      letter-spacing:.8px;
-    }
-
-    .brand b{color:var(--amarillo)}
-
-    .mark{
-      display:grid;
-      place-items:center;
-      background:var(--amarillo);
-      color:var(--violeta);
-      height:50px;
-      width:50px;
-      border-radius:12px;
-      font-size:32px;
-      font-style:italic;
-    }
-
-    .clock{text-align:right}
-
-    .clock strong{
-      display:block;
-      font-size:28px;
-      line-height:1;
-    }
-
-    .clock small{
-      color:var(--suave);
-      font-size:12px;
-      text-transform:capitalize;
-    }
-
-    .layout{
-      display:grid;
-      grid-template-columns:260px 1fr;
-      gap:24px;
-      flex:1;
-      min-height:0;
-    }
-
-    .side {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-
-    .head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:10px;
-    }
-
-    .head h1{
-      margin:0;
-      font-size:14px;
-      letter-spacing:1.5px;
-    }
-
-    .head span{
-      color:var(--amarillo);
-      font-size:11px;
-      font-weight:bold;
-    }
-
-    .channels{
-      flex: 1;
-      min-height: 0;
-      overflow-y:auto;
-      padding-right:4px;
-      scroll-behavior: smooth;
-    }
-
-    .channels::-webkit-scrollbar {
-      width: 5px;
-    }
-    .channels::-webkit-scrollbar-thumb {
-      background: #7d52b3;
-      border-radius: 3px;
-    }
-
-    .channel{
-      display:grid;
-      grid-template-columns:28px 38px 1fr 18px;
-      align-items:center;
-      gap:10px;
-      width:100%;
-      margin:4px 0;
-      padding:9px 10px;
-      border:2px solid transparent;
-      border-radius:10px;
-      background:transparent;
-      color:#fff;
-      cursor:pointer;
-      text-align:left;
-      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
-    }
-
-    .channel:hover,
-    .channel:focus,
-    .channel.focused{
-      background:#532397;
-      border-color: var(--foco);
-      outline: none;
-      transform: scale(1.02);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    }
-
-    .channel.active{
-      background:linear-gradient(90deg,#ffdc3d,#f6b90d);
-      box-shadow:0 4px 12px rgba(18, 3, 44, 0.5);
-      color:#26084e;
-      font-weight:bold;
-    }
-
-    .channel.active.focused{
-      border-color:#fff;
-    }
-
-    .num{
-      font-size:11px;
-      font-weight:bold;
-      opacity:.75;
-    }
-
-    .logo{
-      display:grid;
-      place-items:center;
-      height:30px;
-      border-radius:6px;
-      background:#7d52b3;
-      color:#fff;
-      font-size:11px;
-      font-weight:900;
-    }
-
-    .active .logo{background:#4b1687; color: #fff;}
-
-    .name{
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-      font-size:14px;
-    }
-
-    .play{visibility:hidden; font-size: 12px;}
-    .active .play{visibility:visible}
-
-    .hint{
-      color:#c2b4d8;
-      font-size:11px;
-      line-height:1.4;
-      margin:10px 0 0 0;
-    }
-
-    .main-content {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      justify-content: space-between;
-    }
-
-    .playerwrap{
-      position:relative;
-      flex: 1;
-      min-height: 0;
-      aspect-ratio: 16/9;
-      max-height: 60vh;
-      overflow:hidden;
-      background:#10051e;
-      border:2px solid #8051b6;
-      border-radius:14px;
-      box-shadow:0 16px 35px rgba(22, 3, 44, 0.8);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .playerwrap:focus,
-    .playerwrap.focused {
-      border-color: var(--foco);
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(255, 213, 45, 0.3), 0 16px 35px rgba(22, 3, 44, 0.8);
-    }
-
-    .player,
-    .player iframe,
-    .player video{
-      width:100%;
-      height:100%;
-      border:0;
-      background:#000;
-    }
-
-    .loading{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      height:100%;
-      padding:0 16px;
-      text-align:center;
-      color:var(--suave);
-      font-size:16px;
-    }
-
-    .fullscreen{
-      position:absolute;
-      right:14px;
-      bottom:14px;
-      width:46px;
-      height:40px;
-      border:0;
-      background:rgba(0, 0, 0, 0.6);
-      border-radius:6px;
-      color:#fff;
-      font-size:22px;
-      cursor:pointer;
-      display:grid;
-      place-items:center;
-      transition: background 0.15s ease;
-    }
-
-    .fullscreen:focus, .fullscreen:hover {
-      background: var(--foco);
-      color: var(--violeta);
-      outline: none;
-    }
-
-    .playerwrap:fullscreen{
-      width:100vw;
-      height:100vh;
-      border:0;
-      border-radius:0;
-      max-height: none;
-    }
-
-    .now{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin:1.2vh 0;
-    }
-
-    .live{
-      padding:6px 12px;
-      border-radius:20px;
-      background:#e93860;
-      font-size:11px;
-      font-weight:bold;
-    }
-
-    .live i{
-      display:inline-block;
-      width:6px;
-      height:6px;
-      margin-right:5px;
-      border-radius:50%;
-      background:#fff;
-    }
-
-    .eyebrow{
-      margin:0 0 2px;
-      color:var(--amarillo);
-      font-size:10px;
-      font-weight:bold;
-      letter-spacing:1.2px;
-    }
-
-    .now h2{
-      margin:0;
-      font-size:22px;
-    }
-
-    .fav{
-      margin-left:auto;
-      border:2px solid transparent;
-      background:rgba(255, 255, 255, 0.05);
-      border-radius:10px;
-      width:44px;
-      height:44px;
-      display:grid;
-      place-items:center;
-      color:var(--amarillo);
-      font-size:24px;
-      cursor:pointer;
-      transition: background 0.15s ease, border-color 0.15s ease;
-    }
-
-    .fav:focus, .fav:hover {
-      background:#532397;
-      border-color: var(--foco);
-      outline: none;
-    }
-
-    .tip{
-      padding:10px 14px;
-      border-left:3px solid var(--amarillo);
-      border-radius:6px;
-      background:#29104f;
-      color:#d3c8e1;
-      font-size:12px;
-    }
-
-    @media(max-width:760px){
-      html,body{height:auto; overflow:auto;}
-      .app{height:auto; padding:16px;}
-      .layout{display:block;}
-      .side{margin-bottom:20px;}
-      .channels{display:flex; gap:7px; max-height:none; overflow:auto;}
-      .channel{flex:0 0 170px; grid-template-columns:26px 38px 1fr;}
-      .play,.hint{display:none;}
-      .playerwrap{max-height: none;}
-    }
-  </style>
+/* ===== iPhone / móvil vertical ===== */
+@media(max-width:760px){
+  .app{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px)}
+  .top{height:auto;min-height:0;margin:0;padding:8px 14px}
+  .brand{font-size:19px;gap:10px}
+  .mark{height:34px;width:34px;font-size:22px;border-radius:9px}
+  .clock strong{font-size:20px}
+  .layout{display:flex;flex-direction:column;gap:0}
+  .main-content{order:1;flex:none}
+  .side{order:2;flex:1;padding:6px 12px 0}
+  .playerwrap{flex:none;width:100%;max-height:none;border-radius:0;border-width:2px 0}
+  .fullscreen{top:10px;bottom:auto;right:10px;width:40px;height:36px;font-size:20px}
+  .now{margin:0;padding:10px 14px;gap:10px}
+  .now h2{font-size:18px}
+  .tip{margin:0 12px 6px;padding:6px 10px;font-size:11px}
+  .head{margin-bottom:4px}
+  .channels{padding:0 0 calc(env(safe-area-inset-bottom,0px) + 12px)}
+  .channel{grid-template-columns:24px 40px 1fr 16px;min-height:54px;padding:10px;margin:3px 0}
+  .name{font-size:15px}
+  .hint{display:none}
+}
+/* ===== iPhone horizontal ===== */
+@media(orientation:landscape) and (max-height:500px){
+  .app{padding:env(safe-area-inset-top,0px) max(10px,env(safe-area-inset-right,0px)) 0 max(10px,env(safe-area-inset-left,0px))}
+  .top,.tip,.hint{display:none}
+  .layout{display:grid;grid-template-columns:1fr 240px;gap:12px}
+  .main-content{order:0;justify-content:center;padding-top:8px}
+  .side{order:1;padding:8px 0 0}
+  .playerwrap{flex:none;width:100%;max-height:calc(100dvh - 70px);border-width:2px;border-radius:10px}
+  .now{padding:6px 0;margin:0}
+  .now h2{font-size:15px}
+  .eyebrow,.live{display:none}
+}
+</style>
 </head>
-
 <body>
-  <main class="app">
-    <header class="top">
-      <div class="brand">
-        <span class="mark">R</span>
-        <span>RETRO<b>TOONS</b></span>
+<main class="app">
+  <header class="top">
+    <div class="brand"><span class="mark">R</span><span>RETRO<b>TOONS</b></span></div>
+    <div class="clock"><strong id="clock">--:--</strong><small id="date">---</small></div>
+  </header>
+  <section class="layout">
+    <aside class="side">
+      <div class="head"><h1>EN VIVO</h1><span id="count"></span></div>
+      <nav id="list" class="channels" aria-label="Lista de Canales"></nav>
+      <p class="hint">↑ ↓ Elegir canal · OK reproducir · → reproductor · OK pantalla completa</p>
+    </aside>
+    <section class="main-content">
+      <div id="playerWrap" class="playerwrap" tabindex="0" role="button" aria-label="Reproductor de video. Presiona OK para pantalla completa.">
+        <div id="player" class="player"><div class="loading">Cargando canal…</div></div>
+        <button id="full" class="fullscreen" type="button" aria-label="Pantalla completa">⛶</button>
       </div>
-
-      <div class="clock">
-        <strong id="clock">--:--</strong>
-        <small id="date">---</small>
+      <div class="now">
+        <span class="live"><i></i> EN VIVO</span>
+        <div><p class="eyebrow">MIRANDO AHORA</p><h2 id="title">Cargando…</h2></div>
+        <button id="fav" class="fav" type="button" aria-label="Agregar a favoritos"></button>
       </div>
-    </header>
-
-    <section class="layout">
-      <aside class="side">
-        <div class="head">
-          <h1>EN VIVO</h1>
-          <span id="count"></span>
-        </div>
-
-        <nav id="list" class="channels" aria-label="Lista de Canales"></nav>
-
-        <p class="hint">
-          ↑ ↓ Elegir canal · OK reproducir · → reproductor · OK pantalla completa
-        </p>
-      </aside>
-
-      <section class="main-content">
-        <div
-          id="playerWrap"
-          class="playerwrap"
-          tabindex="0"
-          role="button"
-          aria-label="Reproductor de video. Presiona OK para pantalla completa."
-        >
-          <div id="player" class="player">
-            <div class="loading">Cargando canal…</div>
-          </div>
-
-          <button id="full" class="fullscreen" type="button" aria-label="Pantalla completa">
-            ⛶
-          </button>
-        </div>
-
-        <div class="now">
-          <span class="live"><i></i> EN VIVO</span>
-
-          <div>
-            <p class="eyebrow">MIRANDO AHORA</p>
-            <h2 id="title">Cargando…</h2>
-          </div>
-
-          <button id="fav" class="fav" type="button" aria-label="Agregar a favoritos"></button>
-        </div>
-
-        <div class="tip">
-          <b>Apoya el Proyecto:</b>
-          Si quieres ayudar con este proyecto, dona un cafecito.
-          <span style="color: #C4A900;"><b>Cafecito.app/retrotoons2026</b></span>
-        </div>
-      </section>
+      <div class="tip"><b>Apoya el Proyecto:</b> Si quieres ayudar con este proyecto, dona un cafecito. <span style="color:#C4A900"><b>Cafecito.app/retrotoons2026</b></span></div>
     </section>
-  </main>
+  </section>
+</main>
 
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js"></script>
+<script>
+const channels = [
+  { id:"retrotoons", name:"RetroToons", short:"RT2", stream:"https://183.giatvcdn.com/giatv/giatv-Retrotoonstv/Retrotoonstv/playlist.m3u8" },
+  { id:"jetix", name:"Jetix", short:"JTX", stream:"https://183.giatvcdn.com/giatv/giatv-MYJETIXRETRO/MYJETIXRETRO/chunks.m3u8" },
+  { id:"Canal-lms", name:"Canal LMS | Mexico", short:"LMS", stream:"https://183.giatvcdn.com/ssh101/ssh101/canallms/chunks.m3u8" },
+  { id:"Janimotion", name:"Janimotion", short:"JMT", stream:"https://janimotion.com/hls/janimotion/index.m3u8" },
+  { id:"Extrema", name:"XtremaTV", short:"XTV", stream:"https://stmv3.voxtvhd.com.br/xtremaretrocartoons/xtremaretrocartoons/playlist.m3u8" },
+  { id:"best-clasicos-tv", name:"Best Clasicos TV", short:"BCTV", stream:"https://acceso.mediosdecostarica.com:3873/hybrid/play.m3u8" },
+  { id:"cartoon-network", name:"Cartoon Network", short:"CN", embed:"https://ok.ru/videoembed/8896438738686?nochat=1" },
+  { id:"fox-kids", name:"Fox Kids", short:"FK", embed:"https://ok.ru/videoembed/8967999463166?nochat=1" },
+  { id:"nick-at-nite", name:"Nick At Nite", short:"N@N", embed:"https://ok.ru/videoembed/9194603093758?nochat=1" },
+  { id:"cartoon-cartoon", name:"Cartoon Cartoon", short:"CC", embed:"https://ok.ru/videoembed/10378284506878?nochat=1" },
+  { id:"energeek-retro", name:"EnerGeek Retro", short:"EGR", stream:"https://cl-2.backend.energeek.cl/bkp/egretroweb/tracks-v1a1/mono.ts.m3u8?token=W3bEnerG33k2026" },
+  { id:"magic-kids-argentina", name:"Magic Kids TV Argentina", short:"MKA", stream:"https://183.giatvcdn.com/giatv/giatv-magicplus/magicplus/chunks.m3u8" },
+  { id:"magic-kids-ok", name:"Magic Kids OK", short:"MKO", stream:"https://kali.vdopanel.com:3957/stream/play.m3u8" },
+  { id:"retromagico", name:"RetroMagico", short:"RM", stream:"https://183.giatvcdn.com/ssh101/ssh101/retromagicocnl/chunks.m3u8" },
+  { id:"dreiko-tv", name:"Dreiko TV", short:"DT", stream:"https://cloudvideo.servers10.com:8081/8020/index.m3u8" },
+  { id:"anime-stationv", name:"Anime StationV", short:"AS", stream:"https://live20.bozztv.com/akamaissh101/ssh101/livestreamingtv/chunks.m3u8" },
+  { id:"retro-tv-hd", name:"Retro TV HD", short:"RHD", stream:"https://183.giatvcdn.com/ssh101/ssh101/retrotvcr2025/chunks.m3u8" },
+  { id:"tv-retro-palmares", name:"TV Retro Palmares", short:"TRP", stream:"https://183.giatvcdn.com/ssh101/ssh101/tvretropalmares/chunks.m3u8" },
+  { id:"tv-los-pitufos", name:"TV Los Pitufos", short:"PIT", stream:"https://imps-smrfs.otteravision.com/imps/smrfs/smrfs.m3u8" },
+  { id:"delmi-channel", name:"Delmi Channel", short:"DEL", stream:"https://live20.bozztv.com/giatvplayout7/giatv-209474/tracks-v1a1/mono.ts.m3u8" },
+  { id:"pantalla-clasica", name:"Pantalla Clásica EC", short:"PCE", stream:"https://183.giatvcdn.com/ssh101/ssh101/pantallaclasics/chunks.m3u8" },
+  { id:"sumaq-tv", name:"Sumaq TV", short:"SUM", stream:"https://183.giatvcdn.com/ssh101/ssh101/makins/chunks.m3u8" },
+  { id:"canal-retrox", name:"Canal Retrox TV", short:"RTX", stream:"https://stream-retroxtv.site/live/ofertasplustv.m3u8" },
+  { id:"canal-retrox-plus", name:"Canal Retrox Plus", short:"RTX+", stream:"https://stream-retroxtv.site/w/YsgWSG6WtjajVhCmgkC9kkda.m3u8" },
+  { id:"mi-television-clasica", name:"Mi Televisión Clásica", short:"MTC", stream:"https://mitv.getstreamhosting.com:1936/live/live/chunklist_w1917734841.m3u8" },
+  { id:"tele-clasica", name:"Tele Clásica", short:"TCL", stream:"https://vtm1.msinteractiva.com/teleclasica/teleclasica/playlist.m3u8" },
+  { id:"cn-city", name:"CN City", short:"CNC", stream:"https://envivo.cncity.live/hls/envivo.m3u8" },
+  { id:"retro-plus", name:"Retro Plus", short:"RP", stream:"https://video06.logicahost.com.br/aretroplustv01/aretroplustv01/main_stream.m3u8" },
+  { id:"zyoontv", name:"Zyoon TV", short:"ZTV", stream:"https://live20.bozztv.com/giatv/giatv-ZYOONTV/ZYOONTV/chunks.m3u8" },
+  { id:"Cuento-Cripta", name:"Cuentos de la Cripta 24/7", short:"CDC", stream:"https://183.giatvcdn.com/giatvplayout7/giatv-210858/tracks-v1a1/mono.ts.m3u8" },
+  { id:"Tele-Mas", name:"Tele Mas", short:"TMS", stream:"https://acceso.mediosdecostarica.com:3192/hybrid/play.m3u8" }
+];
 
-  <script>
-    const channels = [
-      { id: "retrotoons", name: "RetroToons", short: "RT2",
-        stream: "https://183.giatvcdn.com/giatv/giatv-Retrotoonstv/Retrotoonstv/playlist.m3u8" },
-      { id: "jetix", name: "Jetix", short: "JTX",
-        stream: "https://183.giatvcdn.com/giatv/giatv-MYJETIXRETRO/MYJETIXRETRO/chunks.m3u8" },
-      { id: "Canal-lms", name: "Canal LMS | Mexico", short: "LMS",
-        stream: "https://183.giatvcdn.com/ssh101/ssh101/canallms/chunks.m3u8" },
-      { id: "Janimotion", name: "Janimotion", short: "JMT",
-        stream: "https://janimotion.com/hls/janimotion/index.m3u8" },
-      { id: "Extrema", name: "XtremaTV", short: "XTV",
-        stream: "https://stmv3.voxtvhd.com.br/xtremaretrocartoons/xtremaretrocartoons/playlist.m3u8" },
-      { id: "best-clasicos-tv", name: "Best Clasicos TV", short: "BCTV",
-        stream: "https://acceso.mediosdecostarica.com:3873/hybrid/play.m3u8" },
-      { id: "cartoon-network", name: "Cartoon Network", short: "CN",
-        embed: "https://ok.ru/videoembed/8896438738686?nochat=1" },
-      { id: "fox-kids", name: "Fox Kids", short: "FK",
-        embed: "https://ok.ru/videoembed/8967999463166?nochat=1" },
-      { id: "nick-at-nite", name: "Nick At Nite", short: "N@N",
-        embed: "https://ok.ru/videoembed/9194603093758?nochat=1" },
-      { id: "cartoon-cartoon", name: "Cartoon Cartoon", short: "CC",
-        embed: "https://ok.ru/videoembed/10378284506878?nochat=1" },
-      { id: "energeek-retro", name: "EnerGeek Retro", short: "EGR",
-        stream: "https://cl-2.backend.energeek.cl/bkp/egretroweb/tracks-v1a1/mono.ts.m3u8?token=W3bEnerG33k2026" },
-      { id: "magic-kids-argentina", name: "Magic Kids TV Argentina", short: "MKA",
-        stream: "https://183.giatvcdn.com/giatv/giatv-magicplus/magicplus/chunks.m3u8" },
-      { id: "magic-kids-ok", name: "Magic Kids OK", short: "MKO",
-        stream: "https://kali.vdopanel.com:3957/stream/play.m3u8" },
-      { id: "retromagico", name: "RetroMagico", short: "RM",
-        stream: "https://183.giatvcdn.com/ssh101/ssh101/retromagicocnl/chunks.m3u8" },
-      { id: "dreiko-tv", name: "Dreiko TV", short: "DT",
-        stream: "https://cloudvideo.servers10.com:8081/8020/index.m3u8" },
-      { id: "anime-stationv", name: "Anime StationV", short: "AS",
-        stream: "https://live20.bozztv.com/akamaissh101/ssh101/livestreamingtv/chunks.m3u8" },
-      { id: "retro-tv-hd", name: "Retro TV HD", short: "RHD",
-        stream: "https://183.giatvcdn.com/ssh101/ssh101/retrotvcr2025/chunks.m3u8" },
-      { id: "tv-retro-palmares", name: "TV Retro Palmares", short: "TRP",
-        stream: "https://183.giatvcdn.com/ssh101/ssh101/tvretropalmares/chunks.m3u8" },
-      { id: "tv-los-pitufos", name: "TV Los Pitufos", short: "PIT",
-        stream: "https://imps-smrfs.otteravision.com/imps/smrfs/smrfs.m3u8" },
-      { id: "delmi-channel", name: "Delmi Channel", short: "DEL",
-        stream: "https://live20.bozztv.com/giatvplayout7/giatv-209474/tracks-v1a1/mono.ts.m3u8" },
-      { id: "pantalla-clasica", name: "Pantalla Clásica EC", short: "PCE",
-        stream: "https://183.giatvcdn.com/ssh101/ssh101/pantallaclasics/chunks.m3u8" },
-      { id: "sumaq-tv", name: "Sumaq TV", short: "SUM",
-        stream: "https://183.giatvcdn.com/ssh101/ssh101/makins/chunks.m3u8" },
-      { id: "canal-retrox", name: "Canal Retrox TV", short: "RTX",
-        stream: "https://stream-retroxtv.site/live/ofertasplustv.m3u8" },
-      { id: "canal-retrox-plus", name: "Canal Retrox Plus", short: "RTX+",
-        stream: "https://stream-retroxtv.site/w/YsgWSG6WtjajVhCmgkC9kkda.m3u8" },
-      { id: "mi-television-clasica", name: "Mi Televisión Clásica", short: "MTC",
-        stream: "https://mitv.getstreamhosting.com:1936/live/live/chunklist_w1917734841.m3u8" },
-      { id: "tele-clasica", name: "Tele Clásica", short: "TCL",
-        stream: "https://vtm1.msinteractiva.com/teleclasica/teleclasica/playlist.m3u8" },
-      { id: "cn-city", name: "CN City", short: "CNC",
-        stream: "https://envivo.cncity.live/hls/envivo.m3u8" },
-      { id: "retro-plus", name: "Retro Plus", short: "RP",
-        stream: "https://video06.logicahost.com.br/aretroplustv01/aretroplustv01/main_stream.m3u8" },
-      { id: "zyoontv", name: "Zyoon TV", short: "ZTV",
-        stream: "https://live20.bozztv.com/giatv/giatv-ZYOONTV/ZYOONTV/chunks.m3u8" },
-      { id: "Cuento-Cripta", name: "Cuentos de la Cripta 24/7", short: "CDC",
-        stream: "https://183.giatvcdn.com/giatvplayout7/giatv-210858/tracks-v1a1/mono.ts.m3u8" },
-      { id: "Tele-Mas", name: "Tele Mas", short: "TMS",
-        stream: "https://acceso.mediosdecostarica.com:3192/hybrid/play.m3u8" }
-    ];
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+};
+const savedIndex = channels.findIndex(ch => ch.id === store.get("retrotoons-last"));
+let current = savedIndex !== -1 ? savedIndex : 0;
+let cursor = current, hlsInstance = null, loadVideoTimeout = null, retryTimeout = null;
+let favorites;
+try{ favorites = new Set(JSON.parse(store.get("retrotoons-favorites") || "[]")); }catch(e){ favorites = new Set(); }
+const $ = s => document.querySelector(s);
+const UNAVAILABLE = "El canal no está disponible por ahora. Probá con otro.";
 
-    // Último canal visto (o el primero)
-    const savedId = localStorage.getItem("retrotoons-last");
-    const savedIndex = channels.findIndex(ch => ch.id === savedId);
-    let current = savedIndex !== -1 ? savedIndex : 0;
-    let cursor = current;
-    let hlsInstance = null;
-    let loadVideoTimeout = null;
-    let retryTimeout = null;
+function render(){
+  const list = $("#list"), top = list.scrollTop;
+  list.innerHTML = "";
+  channels.forEach((channel, index) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.dataset.index = index;
+    b.className = "channel " + (index === current ? "active " : "") + (index === cursor ? "focused" : "");
+    b.innerHTML = `<span class="num">${String(index+1).padStart(2,"0")}</span><span class="logo">${channel.short}</span><span class="name">${channel.name}</span><span class="play">▶</span>`;
+    b.onclick = () => selectChannel(index);
+    list.appendChild(b);
+  });
+  list.scrollTop = top; // evita que la lista salte al inicio al tocar un canal
+}
 
-    const favorites = new Set(
-      JSON.parse(localStorage.getItem("retrotoons-favorites") || "[]")
-    );
+function showMessage(t){ $("#player").innerHTML = `<div class="loading">${t}</div>`; }
 
-    const $ = selector => document.querySelector(selector);
+function destroyPlayer(){
+  clearTimeout(loadVideoTimeout); clearTimeout(retryTimeout);
+  if (hlsInstance){ hlsInstance.destroy(); hlsInstance = null; }
+}
 
-    function render() {
-      const list = $("#list");
-      list.innerHTML = "";
+function selectChannel(index){
+  const channel = channels[index];
+  if (!channel) return;
+  current = cursor = index;
+  store.set("retrotoons-last", channel.id);
+  $("#title").textContent = channel.name;
+  $("#fav").textContent = favorites.has(channel.id) ? "★" : "☆";
+  render();
+  destroyPlayer();
+  showMessage("Cargando canal…");
 
-      channels.forEach((channel, index) => {
-        const button = document.createElement("button");
+  loadVideoTimeout = setTimeout(() => {
+    let media;
+    if (channel.stream){
+      media = document.createElement("video");
+      media.controls = true;
+      media.autoplay = true;
+      media.playsInline = true;
+      media.setAttribute("playsinline", "");
+      media.setAttribute("webkit-playsinline", "");
+      const tryPlay = () => media.play().catch(() => { media.muted = true; media.play().catch(()=>{}); });
+      // iPhone/Safari: HLS nativo (más estable y eficiente que hls.js)
+      const nativeHls = !!media.canPlayType("application/vnd.apple.mpegurl");
 
-        button.dataset.index = index;
-        button.className =
-          "channel " +
-          (index === current ? "active " : "") +
-          (index === cursor ? "focused" : "");
-
-        button.innerHTML = `
-          <span class="num">${String(index + 1).padStart(2, "0")}</span>
-          <span class="logo">${channel.short}</span>
-          <span class="name">${channel.name}</span>
-          <span class="play">▶</span>
-        `;
-
-        button.onclick = () => selectChannel(index);
-        list.appendChild(button);
-      });
-    }
-
-    function showMessage(text) {
-      $("#player").innerHTML = `<div class="loading">${text}</div>`;
-    }
-
-    function destroyPlayer() {
-      clearTimeout(loadVideoTimeout);
-      clearTimeout(retryTimeout);
-      if (hlsInstance) {
-        hlsInstance.destroy();
-        hlsInstance = null;
-      }
-    }
-
-    function selectChannel(index) {
-      const channel = channels[index];
-      if (!channel) return;
-
-      current = index;
-      cursor = index;
-      localStorage.setItem("retrotoons-last", channel.id);
-
-      $("#title").textContent = channel.name;
-      $("#fav").textContent = favorites.has(channel.id) ? "★" : "☆";
-      render();
-
-      destroyPlayer();
-      showMessage("Cargando canal…");
-
-      // Espera 400ms para no saturar la red al cambiar rápido de canal
-      loadVideoTimeout = setTimeout(() => {
-        let media;
-
-        if (channel.stream) {
-          media = document.createElement("video");
-          media.controls = true;
-          media.autoplay = true;
-          media.muted = false;
-          media.playsInline = true;
-
-          if (window.Hls && Hls.isSupported()) {
-            const hls = new Hls({
-              enableWorker: true,
-              lowLatencyMode: true,
-              capLevelToPlayerSize: true,
-              startLevel: -1,
-              maxBufferLength: 15,
-              maxMaxBufferLength: 30,
-              maxBufferSize: 30 * 1000 * 1000,
-              liveSyncDurationCount: 3,
-              fragLoadingTimeOut: 15000,
-            });
-            hlsInstance = hls;
-
-            hls.loadSource(channel.stream);
-            hls.attachMedia(media);
-
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-              media.play().catch(() => {
-                media.muted = true;
-                media.play().catch(() => {});
-              });
-            });
-
-            // Reconexión automática si el stream falla
-            let retries = 0;
-            hls.on(Hls.Events.ERROR, (_, data) => {
-              if (!data.fatal) return;
-
-              if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-                hls.recoverMediaError();
-              } else if (retries < 3) {
-                retries++;
-                retryTimeout = setTimeout(() => hls.startLoad(), 2000 * retries);
-              } else if (hlsInstance === hls) {
-                destroyPlayer();
-                showMessage("El canal no está disponible por ahora. Probá con otro.");
-              }
-            });
-            hls.on(Hls.Events.FRAG_LOADED, () => { retries = 0; });
-          } else {
-            // Fallback nativo (Safari / iOS)
-            media.src = channel.stream;
-            media.oncanplay = () => {
-              media.play().catch(() => {
-                media.muted = true;
-                media.play().catch(() => {});
-              });
-            };
-          }
-        } else {
-          // Iframes (ok.ru)
-          const url = new URL(channel.embed);
-          url.searchParams.set("autoplay", "1");
-          url.searchParams.set("mute", "0");
-
-          media = document.createElement("iframe");
-          media.src = url.href;
-          media.allow = "autoplay; fullscreen; picture-in-picture";
-          media.allowFullscreen = true;
-        }
-
-        media.title = channel.name;
-        $("#player").replaceChildren(media);
-      }, 400);
-    }
-
-    function moveCursor(amount) {
-      cursor = (cursor + amount + channels.length) % channels.length;
-      render();
-
-      const focusedEl = document.querySelector(`[data-index="${cursor}"]`);
-      focusedEl?.focus();
-      focusedEl?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-
-    function toggleFullscreen() {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
+      if (nativeHls){
+        media.src = channel.stream;
+        media.addEventListener("loadedmetadata", tryPlay);
+        media.addEventListener("error", () => showMessage(UNAVAILABLE));
+      } else if (window.Hls && Hls.isSupported()){
+        const hls = new Hls({ enableWorker:true, lowLatencyMode:true, capLevelToPlayerSize:true, startLevel:-1,
+          maxBufferLength:15, maxMaxBufferLength:30, maxBufferSize:30*1000*1000, liveSyncDurationCount:3, fragLoadingTimeOut:15000 });
+        hlsInstance = hls;
+        hls.loadSource(channel.stream);
+        hls.attachMedia(media);
+        hls.on(Hls.Events.MANIFEST_PARSED, tryPlay);
+        let retries = 0;
+        hls.on(Hls.Events.ERROR, (_, data) => {
+          if (!data.fatal) return;
+          if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+          else if (retries < 3){ retries++; retryTimeout = setTimeout(() => hls.startLoad(), 2000*retries); }
+          else if (hlsInstance === hls){ destroyPlayer(); showMessage(UNAVAILABLE); }
+        });
+        hls.on(Hls.Events.FRAG_LOADED, () => { retries = 0; });
       } else {
-        $("#playerWrap").requestFullscreen?.();
+        showMessage("Tu navegador no puede reproducir este canal.");
+        return;
       }
+    } else {
+      const url = new URL(channel.embed);
+      url.searchParams.set("autoplay", "1");
+      url.searchParams.set("mute", "0");
+      media = document.createElement("iframe");
+      media.src = url.href;
+      media.allow = "autoplay; fullscreen; picture-in-picture";
+      media.allowFullscreen = true;
     }
+    media.title = channel.name;
+    $("#player").replaceChildren(media);
+  }, 400);
+}
 
-    $("#count").textContent = channels.length + " CANALES";
+function moveCursor(n){
+  cursor = (cursor + n + channels.length) % channels.length;
+  render();
+  const el = document.querySelector(`[data-index="${cursor}"]`);
+  el?.focus();
+  el?.scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
 
-    $("#full").onclick = toggleFullscreen;
+// Pantalla completa: estándar, nativa de video en iPhone, o simulada para iframes
+function setPseudoFs(on){
+  $("#playerWrap").classList.toggle("pseudo-fs", on);
+  $("#full").textContent = on ? "✕" : "⛶";
+}
+function toggleFullscreen(){
+  const wrap = $("#playerWrap"), video = wrap.querySelector("video");
+  if (document.fullscreenElement || document.webkitFullscreenElement){
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  } else if (wrap.classList.contains("pseudo-fs")){
+    setPseudoFs(false);
+  } else if (wrap.requestFullscreen){
+    wrap.requestFullscreen().catch(() => setPseudoFs(true));
+  } else if (video && video.webkitEnterFullscreen){
+    video.webkitEnterFullscreen();
+  } else {
+    setPseudoFs(true);
+  }
+}
 
-    $("#fav").onclick = () => {
-      const channel = channels[current];
+$("#count").textContent = channels.length + " CANALES";
+$("#full").onclick = toggleFullscreen;
+$("#fav").onclick = () => {
+  const ch = channels[current];
+  favorites.has(ch.id) ? favorites.delete(ch.id) : favorites.add(ch.id);
+  store.set("retrotoons-favorites", JSON.stringify([...favorites]));
+  $("#fav").textContent = favorites.has(ch.id) ? "★" : "☆";
+};
 
-      if (favorites.has(channel.id)) {
-        favorites.delete(channel.id);
-      } else {
-        favorites.add(channel.id);
-      }
+document.onkeydown = e => {
+  const wrap = $("#playerWrap");
+  if (e.key === "ArrowDown"){ e.preventDefault(); moveCursor(1); }
+  if (e.key === "ArrowUp"){ e.preventDefault(); moveCursor(-1); }
+  if (e.key === "ArrowRight"){ e.preventDefault(); wrap.focus(); }
+  if (e.key === "ArrowLeft" && document.activeElement === wrap){
+    e.preventDefault();
+    const el = document.querySelector(`[data-index="${cursor}"]`);
+    el?.focus(); el?.scrollIntoView({ behavior:"smooth", block:"nearest" });
+  }
+  if (e.key === "Enter"){
+    e.preventDefault();
+    if (document.activeElement === wrap || document.activeElement === $("#full")) toggleFullscreen();
+    else if (document.activeElement === $("#fav")) $("#fav").click();
+    else selectChannel(cursor);
+  }
+  if (e.key.toLowerCase() === "f") toggleFullscreen();
+  if (e.key === "Escape"){
+    if (document.fullscreenElement) document.exitFullscreen();
+    else setPseudoFs(false);
+  }
+};
 
-      localStorage.setItem(
-        "retrotoons-favorites",
-        JSON.stringify([...favorites])
-      );
+function updateClock(){
+  const now = new Date();
+  $("#clock").textContent = now.toLocaleTimeString("es-AR", { hour:"2-digit", minute:"2-digit" });
+  $("#date").textContent = now.toLocaleDateString("es-AR", { weekday:"long", day:"numeric", month:"short" });
+}
+updateClock();
+setInterval(updateClock, 1000);
 
-      // Solo actualiza la estrella, sin recargar el video
-      $("#fav").textContent = favorites.has(channel.id) ? "★" : "☆";
-    };
-
-    document.onkeydown = event => {
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        moveCursor(1);
-      }
-
-      if (event.key === "ArrowUp") {
-        event.preventDefault();
-        moveCursor(-1);
-      }
-
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        $("#playerWrap").focus();
-      }
-
-      if (
-        event.key === "ArrowLeft" &&
-        document.activeElement === $("#playerWrap")
-      ) {
-        event.preventDefault();
-
-        const focusedEl = document.querySelector(`[data-index="${cursor}"]`);
-        focusedEl?.focus();
-        focusedEl?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-
-      if (event.key === "Enter") {
-        event.preventDefault();
-
-        if (document.activeElement === $("#playerWrap")) {
-          toggleFullscreen();
-        } else if (document.activeElement === $("#fav")) {
-          $("#fav").click();
-        } else if (document.activeElement === $("#full")) {
-          toggleFullscreen();
-        } else {
-          selectChannel(cursor);
-        }
-      }
-
-      if (event.key.toLowerCase() === "f") {
-        toggleFullscreen();
-      }
-
-      if (event.key === "Escape" && document.fullscreenElement) {
-        document.exitFullscreen();
-      }
-    };
-
-    function updateClock() {
-      const now = new Date();
-
-      $("#clock").textContent = now.toLocaleTimeString("es-AR", {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-
-      $("#date").textContent = now.toLocaleDateString("es-AR", {
-        weekday: "long",
-        day: "numeric",
-        month: "short"
-      });
-    }
-
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    render();
-    selectChannel(current);
-  </script>
-
-  <!-- PWA: service worker, botón de instalar y pantalla encendida -->
-  <script src="pwa.js" defer></script>
+render();
+selectChannel(current);
+$(".channel.active")?.scrollIntoView({ block:"center" });
+</script>
+<script src="pwa.js" defer></script>
 </body>
 </html>
